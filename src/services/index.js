@@ -1,0 +1,13 @@
+module.exports.leadService = require("./lead.service");
+module.exports.userService = require("./user.service");
+module.exports.sourceService = require("./source.service");
+module.exports.courseService = require("./course.service");
+module.exports.branchService = require("./branch.service");
+module.exports.cityService = require("./city.service");
+module.exports.statusService = require("./status.service");
+module.exports.authService = require("./auth.service");
+module.exports.tokenService = require("./token.service");
+module.exports.dashboardService = require("./dashboard.service");
+module.exports.contactService = require('./contact.service')
+
+
