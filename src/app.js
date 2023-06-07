@@ -33,9 +33,12 @@ app.use(cookieParser());
 //admin routes
 app.use("/v1/admin", adminRoutes);
 
-app.use(express.static(path.join(__dirname, "/build")));
+//app.use(express.static(path.join(__dirname, "/build")));
 app.get("*", (req, res) => {
-  return res.sendFile(path.join(__dirname, "build", "index.html"));
+  return res.status(200).json({
+    message:"success!!"
+  })
+  //return res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
 
