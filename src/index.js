@@ -4,7 +4,7 @@ var CronJob = require("cron").CronJob;
 const app = require("./app");
 const { generateExcelSheet } = require("../src/utils/Excel");
 const path = require("path");
-let PORT = 8085;
+let PORT = 4042;
 let server;
 require("dotenv").config({ path: path.join(__dirname, "../.env") });
 
