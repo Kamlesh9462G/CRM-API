@@ -8,6 +8,8 @@ module.exports.statusService = require("./status.service");
 module.exports.authService = require("./auth.service");
 module.exports.tokenService = require("./token.service");
 module.exports.dashboardService = require("./dashboard.service");
-module.exports.contactService = require('./contact.service')
+module.exports.contactService = require('./contact.service');
+module.exports.atService = require("./at.service");
+
 
 

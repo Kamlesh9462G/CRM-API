@@ -10,6 +10,7 @@ const statusRoute = require("./status.route");
 const authRoute = require('./auth.route')
 const dashboardRoute = require('./dashboard.route')
 const contactRoute = require('./contact.route')
+const atRoute = require("./at.route")
 const router = express.Router();
 
 const defaultRoutes = [
@@ -53,6 +54,10 @@ const defaultRoutes = [
     path: "/status",
     route: statusRoute,
   },
+  {
+    path: "/at",
+    route:atRoute
+  }
 ];
 
 defaultRoutes.forEach((route) => {
