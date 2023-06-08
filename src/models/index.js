@@ -11,4 +11,5 @@ module.exports.leadsInfo = require("./lead1.model");
 module.exports.token = require("./token.model");
 module.exports.invalidtokens = require('./invalidToken.model');
 module.exports.contacts = require("./contacts.model");
+module.exports.punches = require("./at.model");
 
