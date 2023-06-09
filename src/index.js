@@ -6,9 +6,6 @@ const { generateExcelSheet } = require("../src/utils/Excel");
 const path = require("path");
 let PORT = 8085;
 let server;
-
-const tedious = require("tedious");
-const axios = require("axios");
       
 
 require("dotenv").config({ path: path.join(__dirname, "../.env") });
