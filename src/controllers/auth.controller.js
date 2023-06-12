@@ -14,8 +14,9 @@ const signupAdmin = async (req, res) => {
   let tokenPayload = {
     userId: admin._id,
     role: "admin",
+    name: admin.Name,
   };
-  const token =  tokenService.generateToken(tokenPayload);
+  const token = tokenService.generateToken(tokenPayload);
   return res.status(httpStatus.CREATED).json({
     message: "success!!",
     token: token,
@@ -67,6 +68,7 @@ const signIn = async (req, res) => {
     appType: type == "web" ? "web" : "app",
     jti: jti,
     role: user.role,
+    name: user.Name,
   };
 
   const token = await tokenService.generateToken(tokenPayload);
@@ -142,10 +144,10 @@ const signout = async (req, res) => {
         user.webJtis.splice(jtiIndex, 1);
       }
     }
-    
+
     await user.save();
-        res.clearCookie("token");
-        return res.status(200).json({
+    res.clearCookie("token");
+    return res.status(200).json({
       message: "Logged out successfully",
     });
   } else {
@@ -176,8 +178,8 @@ const createPin = async (req, res) => {
   // Generate a unique jti value
   const jti = generateJTI();
 
-    user.appTypes.push("app");
-    user.appJtis.push(jti);
+  user.appTypes.push("app");
+  user.appJtis.push(jti);
 
   await user.save();
   let tokenPayload = {
@@ -185,6 +187,7 @@ const createPin = async (req, res) => {
     appType: "app",
     jti: jti,
     role: user.role,
+    name: user.Name,
   };
 
   const token = tokenService.generateToken(tokenPayload);
@@ -213,16 +216,16 @@ const loginWithPin = async (req, res) => {
 
   if (pin != user.pin) {
     return res.status(400).json({
-      message:"pin does not matched!!"
-    })
+      message: "pin does not matched!!",
+    });
   }
   if (pin == user.pin) {
-
     let tokenPayload = {
       userId: user._id,
       appType: "app",
       jti: user.appJtis[0],
       role: user.role,
+      name: user.Name,
     };
     const token = tokenService.generateToken(tokenPayload);
 

@@ -5,6 +5,23 @@ const addLead = async (bodyData) => {
 };
 
 const updateLead = async (leadId, updateData) => {
+  let lead = await getLeadById(leadId);
+
+  if (updateData.EnquiryCourse && updateData.CoursePrice) {
+    lead.prevCourse.push(lead.EnquiryCourse);
+    lead.prevPrice.push(lead.CoursePrice);
+    await lead.save();
+  }
+  if (updateData.FollowupDate) {
+    lead.PrevFollowupDate.push(updateData.FollowupDate);
+    await lead.save();
+  }
+  if (updateData.Status) {
+    let dd = new Date();
+    lead.prevStatus.push(updateData.Status);
+    lead.prevStatusDate.push(dd);
+    lead.whoChangesState.push(updateData.name), await lead.save();
+  }
   return await leads.findOneAndUpdate(
     {
       _id: leadId,
@@ -54,14 +71,23 @@ const getLeads = async (filter, options) => {
   return await leads.aggregatePaginate(aggregate, options);
 };
 const getLeadById = async (leadId) => {
-  return await leads.find({ _id: leadId });
+  return await leads.findOne({ _id: leadId });
 };
 
 const addLeadLogs = async (leadId, leadLogData) => {
-  const { LogType, Remarks } = leadLogData;
+  const { LogType, Remarks, name } = leadLogData;
+  const d = new Date();
+  console.log(d);
   return await leads.findOneAndUpdate(
     { _id: leadId },
-    { $push: { LogType: LogType, Remarks: Remarks } }
+    {
+      $push: {
+        LogType: LogType,
+        Remarks: Remarks,
+        InformationDate: d,
+        logAddedBy: name,
+      },
+    }
   );
   return await leadLogs.create(leadLogData);
 };
@@ -94,7 +120,7 @@ const getDuplicateLeads = async (filter) => {
 };
 
 const TodaysFollowupLeads = async (filter, options) => {
-  console.log(filter)
+  console.log(filter);
   const agg = leads.aggregate([
     {
       $match: filter,
@@ -223,7 +249,7 @@ const getLeadLogs = async (leadId) => {
         FollowupDate: 1,
         Source: 1,
         LogType: 1,
-        Remarks:1
+        Remarks: 1,
       },
     },
   ]);
@@ -251,14 +277,14 @@ const getTodayLeads = async () => {
       },
     },
   ]);
-}
+};
 const searchDuplicateLeads = async (filter) => {
   return await leads.aggregate([
     {
       $match: filter,
     },
   ]);
-}
+};
 
 module.exports = {
   addLead,

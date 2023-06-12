@@ -11,6 +11,6 @@ router.post(
   //    profileImage.single('file'),
   contactController.addContact
 );
-
+router.get("/", contactController.getContacts);
 
 module.exports = router;

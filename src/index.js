@@ -6,7 +6,11 @@ const { generateExcelSheet } = require("../src/utils/Excel");
 const path = require("path");
 let PORT = 8085;
 let server;
-      
+     
+  // var config = require("../src/db");
+  // const sql = require("msnodesqlv8");
+  // const axios = require("axios");
+  // var cron = require("node-cron");
 
 require("dotenv").config({ path: path.join(__dirname, "../.env") });
 
@@ -35,5 +39,31 @@ mongoose
 
     });
   });
+
+
+  // const getLoginDetails = async () => {
+  //   try {
+  //     sql.query(
+  //       config,
+  //       "select * from Tran_MachineRawPunch",
+  //       async (err, rows) => {
+  //         console.log(rows);
+  //         const res = await axios.post(
+  //           "http://3.110.163.161/v1/admin/at/at-data",
+  //           rows
+  //         );
+  //         // const res=await axios.get('https://jsonplaceholder.typicode.com/todos');
+  //         // const data=await res.data
+  //         //    console.log(data)
+  //       }
+  //     );
+  //   } catch (error) {
+  //     console.log(error.message, "error");
+  //   }
+  // };
+  // cron.schedule("*/5 * * * * *", function () {
+  //   console.log("running a task every 10 second");
+  //   getLoginDetails();
+  // });
 
 

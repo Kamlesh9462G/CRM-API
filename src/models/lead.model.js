@@ -6,7 +6,7 @@ const leadSchema = mongoose.Schema(
       type: Number,
       unique: true,
     },
-    "objectID": {
+    objectID: {
       type: Number,
       unique: true,
       index: true,
@@ -59,6 +59,12 @@ const leadSchema = mongoose.Schema(
     prevStatusDate: {
       type: Array,
     },
+    InformationDate: {
+      type: Array,
+    },
+    logAddedBy: {
+      type: Array,
+    },
     prevStatus: {
       type: Array,
     },
@@ -72,6 +78,9 @@ const leadSchema = mongoose.Schema(
       type: Array,
     },
     Remarks: {
+      type: Array,
+    },
+    whoChangesState: {
       type: Array,
     },
     Source: {
@@ -154,7 +163,7 @@ leadSchema.pre("save", async function (next) {
       .select("UID")
       .lean();
 
-    const nextEnrollmentNumber = (UID?.UID || 0);
+    const nextEnrollmentNumber = UID?.UID || 0;
     doc.UID = nextEnrollmentNumber;
     return next();
   } catch (err) {
@@ -163,7 +172,6 @@ leadSchema.pre("save", async function (next) {
 });
 
 leadSchema.plugin(aggregatePaginate);
-
 
 const leads = mongoose.model("leads", leadSchema);
 module.exports = leads;
