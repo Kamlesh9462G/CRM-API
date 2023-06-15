@@ -1,20 +1,21 @@
 const mongoose = require("mongoose");
-const fs = require("fs");
+const https = require('https');
+const http = require('http');
+
+const fs = require('fs');
 var CronJob = require("cron").CronJob;
 const app = require("./app");
 const { generateExcelSheet } = require("../src/utils/Excel");
 const path = require("path");
-let PORT = 4042;
 let server;
-     
-  // var config = require("../src/db");
-  // const sql = require("msnodesqlv8");
-  // const axios = require("axios");
-  // var cron = require("node-cron");
+
+let PORT = 8085 || process.env.PORT;
 
 require("dotenv").config({ path: path.join(__dirname, "../.env") });
 
 mongoose.set("strictQuery", true);
+
+
 mongoose
   .connect(
     //"mongodb+srv://Kamal9462:Kamlesh9462@cluster0.llk00.mongodb.net/crm-new?authSource=admin&replicaSet=atlas-mcpzcn-shard-0&w=majority&readPreference=primary&appname=MongoDB%20Compass&retryWrites=true&ssl=true",
@@ -23,21 +24,35 @@ mongoose
   )
   .then(() => {
     console.log("mongoDB Connected");
-    server = app.listen(PORT, () => {
-      console.log(`server listening to port ${PORT}`);
-                const job = new CronJob("30 5 * * *", function () {
-        try {
-          if (fs.existsSync("./leadDate.xlsx")) {
-            fs.unlinkSync("./leadDate.xlsx");
-          }
-          generateExcelSheet();
-        } catch (err) {
-          console.error(err);
-        }
-      });
-      job.start();
 
-    });
+    if (process.env.HTTPS) {
+      const httpServer = http.createServer(app);
+      server = httpServer.listen(PORT, () => {
+        console.log(`HTTP Server running on port ${PORT}`);
+      });
+    } else {
+      const httpsServer = https.createServer({
+        key: fs.readFileSync('/etc/letsencrypt/live/crm-live.thetoppersacademy.org/fullchain.pem'),
+        cert: fs.readFileSync('/etc/letsencrypt/live/crm-live.thetoppersacademy.org/private.pem'),
+      }, app);
+
+      server = httpsServer.listen(PORT, () => {
+        console.log(`HTTPS Server running on port  ${PORT}`);
+      });
+    }
+      //   const job = new CronJob("30 5 * * *", function () {
+      //   try {
+      //     if (fs.existsSync("./leadDate.xlsx")) {
+      //       fs.unlinkSync("./leadDate.xlsx");
+      //     }
+      //     generateExcelSheet();
+      //   } catch (err) {
+      //     console.error(err);
+      //   }
+      // });
+      // job.start();
+
+  
   });
 
 
