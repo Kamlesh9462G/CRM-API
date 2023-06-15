@@ -9,7 +9,8 @@ const { generateExcelSheet } = require("../src/utils/Excel");
 const path = require("path");
 let server;
 
-let PORT = 8085 || process.env.PORT;
+let PORT = 8085;
+let HTTPS = true;
 
 require("dotenv").config({ path: path.join(__dirname, "../.env") });
 
@@ -24,8 +25,7 @@ mongoose
   )
   .then(() => {
     console.log("mongoDB Connected");
-
-    if (process.env.HTTPS) {
+    if (HTTPS == false) {
       const httpServer = http.createServer(app);
       server = httpServer.listen(PORT, () => {
         console.log(`HTTP Server running on port ${PORT}`);
