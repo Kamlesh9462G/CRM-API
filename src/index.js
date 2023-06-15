@@ -9,7 +9,7 @@ const { generateExcelSheet } = require("../src/utils/Excel");
 const path = require("path");
 let server;
 
-let PORT = 8085;
+let PORT = 4042;
 let HTTPS = true;
 
 require("dotenv").config({ path: path.join(__dirname, "../.env") });
@@ -32,8 +32,8 @@ mongoose
       });
     } else {
       const httpsServer = https.createServer({
-        key: fs.readFileSync('/etc/letsencrypt/live/crm-live.thetoppersacademy.org/fullchain.pem'),
-        cert: fs.readFileSync('/etc/letsencrypt/live/crm-live.thetoppersacademy.org/private.pem'),
+        key: fs.readFileSync('/etc/letsencrypt/live/crm-live.thetoppersacademy.org/privkey.pem'),
+        cert: fs.readFileSync('/etc/letsencrypt/live/crm-live.thetoppersacademy.org/fullchain.pem'),
       }, app);
 
       server = httpsServer.listen(PORT, () => {
