@@ -9,23 +9,22 @@ const { generateExcelSheet } = require("../src/utils/Excel");
 const path = require("path");
 let server;
 
-let PORT = 4042;
-let HTTPS = true;
-
 require("dotenv").config({ path: path.join(__dirname, "../.env") });
 
+let PORT = process.env.PORT;
+let HTTPS = process.env.HTTPS;
+console.log(PORT,HTTPS)
+
+
 mongoose.set("strictQuery", true);
-
-
 mongoose
   .connect(
-    //"mongodb+srv://Kamal9462:Kamlesh9462@cluster0.llk00.mongodb.net/crm-new?authSource=admin&replicaSet=atlas-mcpzcn-shard-0&w=majority&readPreference=primary&appname=MongoDB%20Compass&retryWrites=true&ssl=true",
     process.env.MONGO_URL,
     { useNewUrlParser: true }
   )
   .then(() => {
     console.log("mongoDB Connected");
-    if (HTTPS == false) {
+    if (HTTPS == 'false') {
       const httpServer = http.createServer(app);
       server = httpServer.listen(PORT, () => {
         console.log(`HTTP Server running on port ${PORT}`);
