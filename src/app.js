@@ -1,6 +1,7 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const compression = require('compression')
 require("dotenv").config();
 const path = require('path')
 const httpStatus = require("http-status");
@@ -14,8 +15,11 @@ const adminRoutes = require("./routes/index");
 const app = express();
 
 
+app.use(compression())
+
 app.use(morgan.successHandler);
 app.use(morgan.errorHandler);
+
 
 // enable cors
 app.use(cors());

@@ -1,7 +1,6 @@
 const ApiError = require("../utils/ApiError");
 const httpStatus = require("http-status");
 const { users } = require("../models");
-const { userService } = require(".");
 const addUser = async (bodyData) => {
   let user = await users.findOne({ Email: bodyData.Email });
   if (user) {
