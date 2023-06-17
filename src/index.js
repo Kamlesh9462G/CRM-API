@@ -51,7 +51,9 @@ if (cluster.isMaster) {
       // Handle Redis connection event
       client.connect().then(() => {
         console.log("redis is connected");
-      });
+      }).catch((error)=>{
+        console.log(error)
+      })
       // Set the Redis client on the app object
       app.set("redisClient", client);
 
