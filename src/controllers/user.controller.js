@@ -9,9 +9,11 @@ const crypto = require("crypto");
 const { sendGreetingEmailToUser } = require("../utils/sendEmail");
 
 const addUser = catchAsync(async (req, res) => {
+
   //req.body['image'] = req.file.location;
   req.body["role"] = "user";
   req.body["Permission"] = req.body.Permission;
+  req.body["parentId"] = req.user.userId;
   const addUser = await userService.addUser(req.body);
 
   let setNewPasswordToken = crypto.randomBytes(32).toString("hex");

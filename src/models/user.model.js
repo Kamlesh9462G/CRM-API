@@ -7,6 +7,14 @@ const userSchema = mongoose.Schema(
       type: Number,
       unique: true,
     },
+    parentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      unique: true
+    },
+    companyName: {
+      type: String,
+      unique: true
+    },
     Name: {
       type: String,
     },
@@ -94,7 +102,7 @@ userSchema.pre("save", async function (next) {
   }
 });
 
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
   const user = this;
   if (!user.isModified('Password')) return next();
   const hash = await bcrypt.hash(user.Password, 10);

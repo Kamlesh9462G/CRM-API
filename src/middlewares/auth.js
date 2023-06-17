@@ -43,10 +43,13 @@ const auth = async (req, res, next) => {
     return next();
   } catch (error) {
     if (error.name == "TokenExpiredError") {
+      console.log("inside token expired")
       const decodedData = await extractData(token);
+      console.log(decodedData)
       if (decodedData) {
         const { userId, type } = decodedData;
 
+        console.log(userId, type)
         let user = await users.findOne({ _id: userId });
         if (type == "web") {
           user.webJtis = [];
