@@ -99,10 +99,16 @@ const leadSchema = mongoose.Schema(
       type: String,
     },
     lfd: {
-      type: String,
+      type: Number,
+      default:0
+    },
+    Days: {
+      type: Number,
+      default:0
     },
     Days2: {
-      type: String,
+      type: Number,
+      default:0
     },
   },
   { timestamps: true }

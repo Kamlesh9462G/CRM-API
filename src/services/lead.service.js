@@ -38,7 +38,10 @@ const deleteLead = async (leadId) => {
 };
 
 const getLeads = async (filter, options) => {
-  // Define your aggregate.
+
+  //calculate current date and subtract -1 fro getting yesterday date
+  let curDate = new Date();
+  curDate.setDate(curDate.getDate() - 1);
   var aggregate = leads.aggregate([
     {
       $match: filter,
@@ -48,6 +51,22 @@ const getLeads = async (filter, options) => {
         createdAt: -1,
       },
     },
+    {
+      '$addFields': {
+        'daysss': {
+          '$floor': {
+            '$divide': [
+              {
+                '$subtract': [
+                  '$FollowupDate', curDate
+                ]
+              }, 1000 * 60 * 60 * 24
+            ]
+          }
+        }
+      }
+    },
+
     {
       $project: {
         UID: 1,
@@ -62,7 +81,7 @@ const getLeads = async (filter, options) => {
         Course: "$EnquiryCourse",
         CoursePrice: 1,
         Days2: 1,
-        Days: 1,
+        daysss: 1,
         FollowupDate: 1,
       },
     },

@@ -23,6 +23,7 @@
     "http-status": "^1.6.2",
     "joi": "^17.9.1",
     "jsonwebtoken": "^9.0.0",
+    "moment": "^2.29.4",
     "mongoose": "^7.0.3",
     "mongoose-aggregate-paginate-v2": "^1.0.6",
     "morgan": "^1.10.0",
