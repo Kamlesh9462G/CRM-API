@@ -24,7 +24,7 @@ const auth = async (req, res, next) => {
     if (!user) {
       throw new ApiError(httpStatus.UNAUTHORIZED, "user not found");
     }
-    if (user && user.role == "admin") {
+    if (user && user.UserType == 2) {
       req.user = decoded;
       return next();
     }

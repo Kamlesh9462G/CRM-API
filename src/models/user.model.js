@@ -3,13 +3,19 @@ const bcrypt = require('bcrypt');
 
 const userSchema = mongoose.Schema(
   {
-    serialNumber: {
-      type: Number,
-      unique: true,
-    },
+    // serialNumber: {
+    //   type: Number,
+    //   unique: true,
+    // },
     parentId: {
       type: mongoose.Schema.Types.ObjectId,
-      unique: true
+      unique: true,
+      default:null
+    },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      unique: true,
+      default:null
     },
     companyName: {
       type: String,
@@ -22,7 +28,9 @@ const userSchema = mongoose.Schema(
       type: String,
     },
     UserType: {
-      type: String,
+      type: Number,
+      enum:[1,2,3],//1==>super admin,2==>admin,3==>user
+      default:null,
     },
     Email: {
       type: String,
@@ -80,27 +88,27 @@ const userSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-userSchema.pre("save", async function (next) {
-  try {
-    const doc = this;
-    if (!doc.isNew) {
-      return next(); // Skip if the document is not new
-    }
+// userSchema.pre("save", async function (next) {
+//   try {
+//     const doc = this;
+//     if (!doc.isNew) {
+//       return next(); // Skip if the document is not new
+//     }
 
-    const maxSerialNumber = await mongoose
-      .model("user")
-      .findOne()
-      .sort({ serialNumber: -1 })
-      .select("serialNumber")
-      .lean();
+//     const maxSerialNumber = await mongoose
+//       .model("user")
+//       .findOne()
+//       .sort({ serialNumber: -1 })
+//       .select("serialNumber")
+//       .lean();
 
-    const nextSerialNumber = (maxSerialNumber?.serialNumber || 0) + 1;
-    doc.serialNumber = nextSerialNumber;
-    return next();
-  } catch (err) {
-    return next(err);
-  }
-});
+//     const nextSerialNumber = (maxSerialNumber?.serialNumber || 0) + 1;
+//     doc.serialNumber = nextSerialNumber;
+//     return next();
+//   } catch (err) {
+//     return next(err);
+//   }
+// });
 
 userSchema.pre('save', async function (next) {
   const user = this;

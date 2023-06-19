@@ -38,6 +38,7 @@ const deleteLead = async (leadId) => {
 };
 
 const getLeads = async (filter, options) => {
+  console.log(filter)
 
   //calculate current date and subtract -1 fro getting yesterday date
   let curDate = new Date();
@@ -304,6 +305,15 @@ const searchDuplicateLeads = async (filter) => {
     },
   ]);
 };
+const getNewLeads = async(filter)=>{
+  console.log(filter)
+  return await leads.aggregate([
+    {
+      '$match': filter
+    }
+  ])
+
+}
 
 module.exports = {
   addLead,
@@ -321,4 +331,5 @@ module.exports = {
   getTodayLeads,
   getAllLeads1,
   searchDuplicateLeads,
+  getNewLeads
 };

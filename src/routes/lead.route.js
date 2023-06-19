@@ -17,6 +17,7 @@ router.route("/").get(auth,leadController.getLeads).post(
   auth,
   leadController.addLead
 );
+router.route("/new-leads").get(auth,leadController.getNewLeads);
 
 router
   .route("/logs")

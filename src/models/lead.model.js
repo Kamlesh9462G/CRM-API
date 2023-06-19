@@ -11,6 +11,16 @@ const leadSchema = mongoose.Schema(
       unique: true,
       index: true,
     },
+    parentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      unique: true,
+      default:null
+    },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      unique: true,
+      default:null
+    },
     Name: {
       type: String,
     },

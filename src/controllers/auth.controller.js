@@ -1,31 +1,83 @@
 const { authService, userService, tokenService } = require("../services");
-const { loginLogs, users } = require("../models");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
-const { v4: uuidv4 } = require("uuid");
-const { sendEmail, sendForgotPasswordEmail } = require("../utils/sendEmail");
-
+const jwt = require("jsonwebtoken");
+const { users, loginLogs } = require("../models");
 const ApiError = require("../utils/ApiError");
+const { sendEmail, sendForgotPasswordEmail } = require("../utils/sendEmail");
 const httpStatus = require("http-status");
 
 const signupAdmin = async (req, res) => {
-  req.body["role"] = "admin";
-  const admin = await authService.signupAdmin(req.body);
-  let tokenPayload = {
-    userId: admin._id,
-    role: "admin",
-    name: admin.Name,
-  };
-  const token = tokenService.generateToken(tokenPayload);
-  return res.status(httpStatus.CREATED).json({
-    message: "success!!",
-    token: token,
-  });
+  const { Email, UserType } = req.body;
+  /**
+   * Creating Super Admin
+   */
+  if (UserType == 1) {
+    const superAdmin = await userService.getUserByEmail(Email);
+
+    if(superAdmin){
+      return res.status(httpStatus.BAD_REQUEST).json({
+        message: `user already exists with this email: ${Email}`,
+      });
+    }
+
+    req.body["Password"] = "superadmin@123";
+    await authService.signupAdmin(req.body);
+
+    return res.status(httpStatus.CREATED).json({
+      message: "super admin created successfully!!",
+    });
+
+  }
+  /**
+   * Creating Admin
+   */
+  if (UserType == 2) {
+    const token = req.headers["authorization"]?.split(" ")[1];
+    if (!token) {
+      return res.status(httpStatus.BAD_REQUEST).json({
+        message: "Token is required!!",
+      });
+    }
+    try {
+      console.log("inside try")
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      console.log("decoded")
+      console.log(decoded)
+      const superAdmin = await users.findOne({_id:decoded.userId,UserType:1}).lean();
+
+      if (!superAdmin) {
+        throw new ApiError(httpStatus.UNAUTHORIZED, "super admin not found");
+      }
+
+      const admin = await userService.getUserByEmail(Email);
+
+      if(admin){
+        return res.status(httpStatus.BAD_REQUEST).json({
+          message: `user already exists with this email ${Email}`,
+        });
+      }
+
+      req.body["Password"] = "admin@123";
+
+      let newAdmin = await authService.signupAdmin(req.body);
+      newAdmin['parentId'] = newAdmin._id;
+      await newAdmin.save();
+
+      return res.status(httpStatus.CREATED).json({
+        message: "admin created successfully!!",
+      });
+
+    } catch (error) {
+      console.log(error.message);
+      return res.status(500).json({
+        message:error.message
+      })
+    }
+  }
 };
 // Function to generate a unique jti value
 function generateJTI() {
-  // Generate a unique string or use a library to generate a random UUID
-  // Here's an example using a timestamp and a random number
   const timestamp = Date.now().toString();
   const random = Math.random().toString().substring(2, 8);
   const jti = timestamp + random;
@@ -69,6 +121,7 @@ const signIn = async (req, res) => {
     jti: jti,
     role: user.role,
     name: user.Name,
+    UserType: user.UserType,
   };
 
   const token = await tokenService.generateToken(tokenPayload);

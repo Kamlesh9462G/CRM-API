@@ -9,11 +9,19 @@ const UsersModel = require("../models/user.model");
 const pick = require("../utils/pick");
 const { object } = require("joi");
 const { addLeadToAlgolia } = require("../utils/Algolia");
-const { objectId } = require("../validations/custom.validation");
+const { ObjectId } = require("mongodb");
 const addLead = catchAsync(async (req, res) => {
   req.body["Remark"] = req.body.Remarks;
 
   delete req.body.Remarks;
+
+  if (req.user.UserType == 2) {
+    req.body["parentId"] = req.user.userId;
+  }
+  if (req.user.UserType == 3) {
+    req.body["parentId"] = req.user.parentId;
+    req.body["userId"] = req.user._id;
+  }
 
   let addLead = await leadService.addLead(req.body);
 
@@ -42,6 +50,7 @@ const deleteLead = catchAsync(async (req, res) => {
   });
 });
 const getLeads = catchAsync(async (req, res) => {
+  console.log(req.user);
   try {
     const options = pick(req.query, ["sortBy", "limit", "page"]);
 
@@ -58,10 +67,19 @@ const getLeads = catchAsync(async (req, res) => {
     let dynamicObj = {
       $and: [],
     };
+    if (req.user.UserType == 2) {
+      filter["parentId"] = new ObjectId(req.user.userId);
+      dynamicObj.$and.push({
+        $or: [{ parentId: { $in: [new ObjectId(req.user.userId)] } }],
+      });
+    }
+    if (req.user.UserType == 3) {
+    }
+
     dynamicObj.$and.push({
       $or: [{ Status: { $in: ["Open", "Final Lead", "Hot Lead"] } }],
     });
-    if (req.user.role === "user") {
+    if (req.user.role === 3) {
       let arr = [];
       arr.push(req.user.Name);
 
@@ -299,6 +317,89 @@ const getLeadById = async (req, res) => {
   }
 };
 
+const getNewLeads = async (req, res) => {
+  const {
+    keyword,
+    City,
+    Course,
+    Status,
+    Branch,
+    AssignTo,
+    Source,
+    EnquiryDate,
+    FollowupDate,
+  } = req.query;
+  let filter = {};
+  if (req.user.UserType == 2) {
+    Object.assign(filter, {
+      parentId: new ObjectId(req.user.userId),
+    });
+  }
+  if (req.user.UserType == 3) {
+    Object.assign(filter, {
+      parentId: new ObjectId(req.user.parentId),
+      userId: new ObjectId(req.user._id),
+    });
+  }
+  if (City) {
+    Object.assign(filter, {
+      City: { $in: City.split(",") },
+    });
+  }
+  if (Course) {
+    Object.assign(filter, {
+      Course: { $in: Course.split(",") },
+    });
+  }
+  if (Status) {
+    Object.assign(filter, {
+      Status: { $in: Status.split(",") },
+    });
+  }
+  if (Branch) {
+    Object.assign(filter, {
+      Branch: { $in: Branch.split(",") },
+    });
+  }
+  if (Source) {
+    Object.assign(filter, {
+      Source: { $in: Source.split(",") },
+    });
+  }
+  if (EnquiryDate) {
+    console.log(EnquiryDate)
+    const isoDateString1 = EnquiryDate.gte;
+    const isoDateString2 = EnquiryDate.lte;
+
+    const date1 = new Date(isoDateString1);
+    const date2 = new Date(isoDateString2);
+    Object.assign(filter, {
+      EnquiryDate: {
+        $gte: new Date(date1),
+        $lt: new Date(date2),
+      },
+    });
+  }
+  if(FollowupDate){
+    const isoDateString1 = FollowupDate.gte;
+    const isoDateString2 = FollowupDate.lte;
+
+    const date1 = new Date(isoDateString1);
+    const date2 = new Date(isoDateString2);
+    Object.assign(filter, {
+      FollowupDate: {
+        $gte: new Date(date1),
+        $lt: new Date(date2),
+      },
+    });
+  }
+
+  const leads = await leadService.getNewLeads(filter);
+
+  return res.status(200).json({
+    Data: leads,
+  });
+};
 
 // const getLeads = catchAsync(async (req, res) => {
 //   let filter = {};
@@ -537,4 +638,5 @@ module.exports = {
   TodaysFollowupLeads,
   getLeadLogs,
   searchDuplicateLeads,
+  getNewLeads,
 };
