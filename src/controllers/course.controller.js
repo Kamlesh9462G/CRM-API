@@ -43,7 +43,7 @@ const getCourse = async (req, res) => {
 
   const course = await courseService.getCourse(filter);
 
-  await setCache(redisClient,req.originalUrl, JSON.stringify(course));
+  //await setCache(redisClient,req.originalUrl, JSON.stringify(course));
 
   return res.status(httpStatus.OK).json({
     message: "courses",

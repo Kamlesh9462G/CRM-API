@@ -9,7 +9,7 @@ const router = express.Router();
 
 router
   .route("/")
-  .get(auth,cacheMiddleware, courseController.getCourse)
+  .get(auth, courseController.getCourse)
   .post(auth,courseController.addCourse);
 
 router
