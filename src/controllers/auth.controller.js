@@ -6,6 +6,7 @@ const { users, loginLogs } = require("../models");
 const ApiError = require("../utils/ApiError");
 const { sendEmail, sendForgotPasswordEmail } = require("../utils/sendEmail");
 const httpStatus = require("http-status");
+const { strict } = require("assert");
 
 const signupAdmin = async (req, res) => {
   const { Email, UserType } = req.body;
@@ -152,7 +153,7 @@ const signIn = async (req, res) => {
   //   sameSite: "none",
   //   secure: true,
   // });
-  res.cookie('token', token, { maxAge: 3600000, httpOnly: true });
+  res.cookie('token', token, { maxAge: 3600000, httpOnly: true,sameSite:strict,secure:true });
 
   let userData = {};
   userData["Name"] = user.Name;
