@@ -145,13 +145,14 @@ const signIn = async (req, res) => {
   //   httpOnly: true,
   // });
 
-  res.cookie(String("token"), token, {
-    path: "/",
-    maxAge: 900000,
-    httpOnly: true,
-    sameSite: "none",
-    secure: true,
-  });
+  // res.cookie(String("token"), token, {
+  //   path: "/",
+  //   maxAge: 900000,
+  //   httpOnly: true,
+  //   sameSite: "none",
+  //   secure: true,
+  // });
+  res.cookie('token', token, { maxAge: 3600000, httpOnly: true });
 
   let userData = {};
   userData["Name"] = user.Name;
