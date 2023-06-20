@@ -330,15 +330,23 @@ const getNewLeads = async (req, res) => {
     FollowupDate,
   } = req.query;
   let filter = {};
+  const options = pick(req.query, ["sortBy", "limit", "page"]);
   if (req.user.UserType == 2) {
     Object.assign(filter, {
       parentId: new ObjectId(req.user.userId),
     });
   }
   if (req.user.UserType == 3) {
+    let userIds = [];
+    userIds.push(new ObjectId(req.user._id));
+    if (req.user.Permission.length > 0) {
+      for (let userId of req.user.Permission) {
+        userIds.push(new ObjectId(userId));
+      }
+    }
     Object.assign(filter, {
       parentId: new ObjectId(req.user.parentId),
-      userId: new ObjectId(req.user._id),
+      userId: { $in: userIds },
     });
   }
   if (City) {
@@ -366,8 +374,13 @@ const getNewLeads = async (req, res) => {
       Source: { $in: Source.split(",") },
     });
   }
+  if (AssignTo) {
+    Object.assign(filter, {
+      AssignTo: { $in: AssignTo.split(",") },
+    });
+  }
   if (EnquiryDate) {
-    console.log(EnquiryDate)
+    console.log(EnquiryDate);
     const isoDateString1 = EnquiryDate.gte;
     const isoDateString2 = EnquiryDate.lte;
 
@@ -380,7 +393,7 @@ const getNewLeads = async (req, res) => {
       },
     });
   }
-  if(FollowupDate){
+  if (FollowupDate) {
     const isoDateString1 = FollowupDate.gte;
     const isoDateString2 = FollowupDate.lte;
 
@@ -394,10 +407,12 @@ const getNewLeads = async (req, res) => {
     });
   }
 
-  const leads = await leadService.getNewLeads(filter);
-
-  return res.status(200).json({
-    Data: leads,
+  const leadss = await leadService.getNewLeads(filter, options);
+  const { docs, ...otherFields } = leadss;
+  return res.status(httpStatus.OK).json({
+    message: "success!!",
+    Data: docs,
+    ...otherFields,
   });
 };
 

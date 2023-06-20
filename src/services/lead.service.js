@@ -38,7 +38,7 @@ const deleteLead = async (leadId) => {
 };
 
 const getLeads = async (filter, options) => {
-  console.log(filter)
+  console.log(filter);
 
   //calculate current date and subtract -1 fro getting yesterday date
   let curDate = new Date();
@@ -53,19 +53,18 @@ const getLeads = async (filter, options) => {
       },
     },
     {
-      '$addFields': {
-        'daysss': {
-          '$floor': {
-            '$divide': [
+      $addFields: {
+        daysss: {
+          $floor: {
+            $divide: [
               {
-                '$subtract': [
-                  '$FollowupDate', curDate
-                ]
-              }, 1000 * 60 * 60 * 24
-            ]
-          }
-        }
-      }
+                $subtract: ["$FollowupDate", curDate],
+              },
+              1000 * 60 * 60 * 24,
+            ],
+          },
+        },
+      },
     },
 
     {
@@ -305,15 +304,57 @@ const searchDuplicateLeads = async (filter) => {
     },
   ]);
 };
-const getNewLeads = async(filter)=>{
-  console.log(filter)
-  return await leads.aggregate([
+const getNewLeads = async (filter, options) => {
+  console.log(filter);
+  //calculate current date and subtract -1 fro getting yesterday date
+  let curDate = new Date();
+  curDate.setDate(curDate.getDate() - 1);
+  var aggregate = leads.aggregate([
     {
-      '$match': filter
-    }
-  ])
+      $match: filter,
+    },
+    {
+      $sort: {
+        createdAt: -1,
+      },
+    },
+    {
+      $addFields: {
+        daysss: {
+          $floor: {
+            $divide: [
+              {
+                $subtract: ["$FollowupDate", curDate],
+              },
+              1000 * 60 * 60 * 24,
+            ],
+          },
+        },
+      },
+    },
 
-}
+    {
+      $project: {
+        UID: 1,
+        AssignTo: 1,
+        Source: 1,
+        City: 1,
+        Status: 1,
+        EnquiryDate: 1,
+        Name: 1,
+        Phone1: 1,
+        Phone2: 1,
+        Course: "$EnquiryCourse",
+        CoursePrice: 1,
+        Days2: 1,
+        daysss: 1,
+        FollowupDate: 1,
+      },
+    },
+  ]);
+
+  return await leads.aggregatePaginate(aggregate, options);
+};
 
 module.exports = {
   addLead,
@@ -331,5 +372,5 @@ module.exports = {
   getTodayLeads,
   getAllLeads1,
   searchDuplicateLeads,
-  getNewLeads
+  getNewLeads,
 };

@@ -12,7 +12,7 @@ const router = express.Router();
 router.route("/duplicate-lead").get(leadController.getDuplicateLeads);
 router.route("/search-duplicate-lead").get(auth,leadController.searchDuplicateLeads);
 
-router.route("/").get(auth,leadController.getLeads).post(
+router.route("/").get(auth,leadController.getNewLeads).post(
   //profileImage.single("file"),
   auth,
   leadController.addLead
