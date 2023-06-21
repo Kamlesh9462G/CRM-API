@@ -159,6 +159,7 @@ const signIn = async (req, res) => {
   userData["Name"] = user.Name;
   userData["Email"] = user.Email;
   userData["role"] = user.role;
+  userData["UserType"] =  user && user.UserType;
   userData["pin"] = user.pin != null ? true : false;
 
   return res.status(httpStatus.OK).json({
