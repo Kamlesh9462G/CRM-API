@@ -24,7 +24,7 @@ const auth = async (req, res, next) => {
     if (!user) {
       throw new ApiError(httpStatus.UNAUTHORIZED, "user not found");
     }
-    if (user && user.UserType == 2) {
+    if (user && (user.UserType == 2 || user.UserType == 3)) {
       req.user = decoded;
       return next();
     }

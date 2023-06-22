@@ -59,6 +59,12 @@ const signOutUser = async (type, usreId) => {
   return await users.findOneAndUpdate({ _id: usreId }, obj);
 };
 
+const getAllAdmins = async()=>{
+return await users.aggregate([
+  
+])
+}
+
 module.exports = {
   addUser,
   updateUser,
@@ -67,4 +73,5 @@ module.exports = {
   getUserByEmail,
   signOutUser,
   getUserById,
+  getAllAdmins
 };

@@ -41,6 +41,7 @@ app.get('/v1/admin', (req, res, next) => {
 
 //admin routes
 app.use("/v1/admin", adminRoutes);
+app.use("/v1/super-admin", adminRoutes);
 
 //app.use(express.static(path.join(__dirname, "/build")));
 // app.get("*", (req, res) => {
