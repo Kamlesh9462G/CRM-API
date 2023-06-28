@@ -32,12 +32,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy to EC2
+      - name: SSH into server and run commands
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOSTNAME  }}
-          username: ${{ secrets.USERNAME  }}
-          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_PRIVATE_KEY }}
+          port: ${{ secrets.SERVER_PORT }}
           script: |
             cd /CRM-API
             git pull
