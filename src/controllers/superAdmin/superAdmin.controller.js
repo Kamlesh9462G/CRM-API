@@ -1,9 +1,10 @@
-const {userService} = require('../../services')
+const httpStatus = require("http-status");
+const { userService } = require("../../services");
 const getAllAdmins = async (req, res) => {
-
-  console.log("get all admins!!!");
-
-  const admins = await userService.addUser();
+  const admins = await userService.getAllAdminsNew();
+  return res.status(httpStatus.OK).json({
+    Data: admins,
+  });
 };
 
 module.exports = {

@@ -125,7 +125,7 @@ const signIn = async (req, res) => {
     UserType: user.UserType,
   };
 
-  const token = await tokenService.generateToken(tokenPayload);
+  const token =  tokenService.generateToken(tokenPayload);
 
   await new loginLogs({
     userId: user._id,
@@ -171,12 +171,17 @@ const signIn = async (req, res) => {
 };
 
 const signout = async (req, res) => {
+  console.log(req.user)
   const token =
     req.cookies?.token || req.headers["authorization"]?.split(" ")[1];
   if (token) {
     let { type } = req.body;
     // Find the user by ID
+    if(req.user.UserType == 1){
+      req.user.userId = req.user._id;
+    }
     const user = await userService.getUserById(req.user.userId);
+    console.log(user)
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }

@@ -11,6 +11,7 @@ const ApiError = require("../src/utils/ApiError");
 const { errorHandler, errorConverter } = require("../src/middlewares/error");
 
 const adminRoutes = require("./routes/index");
+const superAdminRoutes = require('./routes/super-admin/index')
 
 const app = express();
 
@@ -41,15 +42,15 @@ app.get('/v1/admin', (req, res, next) => {
 
 //admin routes
 app.use("/v1/admin", adminRoutes);
-app.use("/v1/super-admin", adminRoutes);
+app.use("/v1/super-admin", superAdminRoutes);
 
-//app.use(express.static(path.join(__dirname, "/build")));
-// app.get("*", (req, res) => {
-//   return res.status(200).json({
-//     message:"success!!"
-//   })
-//   //return res.sendFile(path.join(__dirname, "build", "index.html"));
-// });
+app.use(express.static(path.join(__dirname, "/build/build")));
+app.get("*", (req, res) => {
+  // return res.status(200).json({
+  //   message:"success!!"
+  // })
+  return res.sendFile(path.join(__dirname, "/build/build", "index.html"));
+});
 
 
 

@@ -3,16 +3,16 @@ const userModel = require("../models/user.model");
 const httpStatus = require("http-status");
 const catchAsync = require("../utils/catchAsync");
 const { userService, tokenService } = require("../services");
-const { ObjectId } = require('mongodb')
+const { ObjectId } = require("mongodb");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const { sendGreetingEmailToUser } = require("../utils/sendEmail");
 
 const addUser = catchAsync(async (req, res) => {
-  console.log(req.user)
-  const {Email} = req.body;
+  console.log(req.user);
+  const { Email } = req.body;
   const user = await userService.getUserByEmail(Email);
-  if(user){
+  if (user) {
     return res.status(httpStatus.BAD_REQUEST).json({
       message: `user already exists with this email: ${Email}`,
     });
@@ -33,21 +33,19 @@ const addUser = catchAsync(async (req, res) => {
   };
   await tokenService.createSetOrForgotPwdToken(tokenPayload);
 
-
   let link = `http://localhost:8085/passwordReset?token=${setNewPasswordToken}&id=${addUser._id}`;
-  await sendGreetingEmailToUser(addUser.Email,addUser.Name,link);
-      // await sendGreetingEmailToUser({
-      //   email: addUser.Email,
-      //   subject: `Welcome to Our Lead Management System! Password Update Required.`,
-      //   htmlMsg,
-      // });
+  await sendGreetingEmailToUser(addUser.Email, addUser.Name, link);
+  // await sendGreetingEmailToUser({
+  //   email: addUser.Email,
+  //   subject: `Welcome to Our Lead Management System! Password Update Required.`,
+  //   htmlMsg,
+  // });
   return res.status(httpStatus.CREATED).json({
     message: "User created successfully!!",
     Data: addUser,
   });
 });
 const updateUser = async (req, res) => {
-
   const updateUser = await userService.updateUser(req.params.id, req.body);
   return res.status(httpStatus.CREATED).json({
     message: "User updated successfully!!",
@@ -63,6 +61,7 @@ const deleteUser = async (req, res) => {
 };
 const getUsers = async (req, res) => {
   let filter = {};
+  filter["userTpe"] = 3;
 
   if (req.query._id) {
     filter["_id"] = req.query._id;
@@ -79,21 +78,28 @@ const getUsers = async (req, res) => {
   //     },
   //   },
   // ];
-  if (req.user.role == "user") {
-    let arr = [];
-    arr.push(new ObjectId(req.user._id));
-    if (req.user.Permission.length == 0) {
-      arr.push(new ObjectId(req.user._id));
-    }
-    if (req.user.Permission.length > 0) {
-      for (let permissionId of req.user.Permission) {
-        arr.push(new ObjectId(permissionId));
-      }
-    }
-    filter["_id"] = {
-      "$in":arr
-    }
+  if (req.user.userType == 2) {
+    filter["parentId"] = req.user._id;
   }
+  if (req.user.userType == 3) {
+    filter["userId"] = req.user._id;
+    filter["parentId"] = req.user.parentId;
+  }
+  // if (req.user.userType == 3) {
+  //   let arr = [];
+  //   arr.push(new ObjectId(req.user._id));
+  //   if (req.user.Permission.length == 0) {
+  //     arr.push(new ObjectId(req.user._id));
+  //   }
+  //   if (req.user.Permission.length > 0) {
+  //     for (let permissionId of req.user.Permission) {
+  //       arr.push(new ObjectId(permissionId));
+  //     }
+  //   }
+  //   filter["_id"] = {
+  //     "$in":arr
+  //   }
+  // }
 
   const users = await userService.getUsers(filter);
   return res.status(httpStatus.CREATED).json({
