@@ -10,6 +10,7 @@ module.exports.tokenService = require("./token.service");
 module.exports.dashboardService = require("./dashboard.service");
 module.exports.contactService = require('./contact.service');
 module.exports.atService = require("./at.service");
+module.exports.permissionService = require('./permission.service')
 
 
 

@@ -48,7 +48,7 @@ const signupAdmin = async (req, res) => {
       const superAdmin = await users.findOne({_id:decoded.userId,UserType:1}).lean();
 
       if (!superAdmin) {
-        throw new ApiError(httpStatus.UNAUTHORIZED, "super admin not found");
+        throw new ApiError(httpStatus.UNAUTHORIZED, "unauthorized");
       }
 
       const admin = await userService.getUserByEmail(Email);
@@ -161,6 +161,7 @@ const signIn = async (req, res) => {
   userData["role"] = user.role;
   userData["UserType"] =  user && user.UserType;
   userData["pin"] = user.pin != null ? true : false;
+  userData["menuPermissions"] = user.menuPermissions;
 
   return res.status(httpStatus.OK).json({
     message: "success",

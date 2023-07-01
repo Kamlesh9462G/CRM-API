@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 
 const userSchema = mongoose.Schema(
   {
@@ -10,16 +10,16 @@ const userSchema = mongoose.Schema(
     parentId: {
       type: mongoose.Schema.Types.ObjectId,
       unique: true,
-      default:null
+      default: null,
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       unique: true,
-      default:null
+      default: null,
     },
     companyName: {
       type: String,
-      unique: true
+      unique: true,
     },
     Name: {
       type: String,
@@ -29,8 +29,8 @@ const userSchema = mongoose.Schema(
     },
     UserType: {
       type: Number,
-      enum:[1,2,3],//1==>super admin,2==>admin,3==>user
-      default:null,
+      enum: [1, 2, 3], //1==>super admin,2==>admin,3==>user
+      default: null,
     },
     Email: {
       type: String,
@@ -71,6 +71,21 @@ const userSchema = mongoose.Schema(
     City: {
       type: String,
     },
+    menuPermissions: {
+      type: Array,
+    },
+    Address: {
+      type: String,
+    },
+    teamSize: {
+      type: Number,
+    },
+    numberOfUsers: {
+      type: Number,
+    },
+    validupTo: {
+      type: Date,
+    },
     currentStatus: {
       type: String,
     },
@@ -110,9 +125,9 @@ const userSchema = mongoose.Schema(
 //   }
 // });
 
-userSchema.pre('save', async function (next) {
+userSchema.pre("save", async function (next) {
   const user = this;
-  if (!user.isModified('Password')) return next();
+  if (!user.isModified("Password")) return next();
   const hash = await bcrypt.hash(user.Password, 10);
   user.Password = hash;
   next();

@@ -11,7 +11,8 @@ const authRoute = require('./auth.route')
 const dashboardRoute = require('./dashboard.route')
 const contactRoute = require('./contact.route')
 const atRoute = require("./at.route")
-const webhookRoute = require('./webhook.route')
+const webhookRoute = require('./webhook.route');
+const permissionRoute = require('./permission.route')
 const router = express.Router();
 
 const defaultRoutes = [
@@ -62,6 +63,10 @@ const defaultRoutes = [
   {
     path: "/webhook",
     route: webhookRoute,
+  },
+  {
+    path: "/permissions",
+    route: permissionRoute,
   },
 ];
 
