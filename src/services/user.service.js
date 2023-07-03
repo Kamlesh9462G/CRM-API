@@ -30,9 +30,7 @@ const getUsers = async (filter) => {
   //return await users.find(filter);
   return await users.aggregate([
     {
-      $match: {
-        UserType: 3,
-      },
+      $match: filter
     },
     {
       $project: {

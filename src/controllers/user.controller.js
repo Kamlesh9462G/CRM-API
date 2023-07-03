@@ -61,8 +61,9 @@ const deleteUser = async (req, res) => {
   });
 };
 const getUsers = async (req, res) => {
+  console.log(req.user)
   let filter = {};
-  filter["userTpe"] = 3;
+  filter["UserType"] = 3;
 
   if (req.query._id) {
     filter["_id"] = req.query._id;
@@ -79,12 +80,15 @@ const getUsers = async (req, res) => {
   //     },
   //   },
   // ];
-  if (req.user.userType == 2) {
-    filter["parentId"] = req.user._id;
+  if (req.user.UserType == 2) {
+    console.log("inside if")
+    filter["parentId"] = new ObjectId(req.user.userId);
+    
   }
-  if (req.user.userType == 3) {
-    filter["userId"] = req.user._id;
-    filter["parentId"] = req.user.parentId;
+  if (req.user.UserType == 3) {
+    console.log("inside if if")
+    filter["userId"] = new ObjectId(req.user._id);
+    filter["parentId"] = new ObjectId(req.user.parentId);
   }
   // if (req.user.userType == 3) {
   //   let arr = [];
