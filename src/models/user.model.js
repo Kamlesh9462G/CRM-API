@@ -86,6 +86,9 @@ const userSchema = mongoose.Schema(
     validupTo: {
       type: Date,
     },
+    webURL: {
+      type: String,
+    },
     currentStatus: {
       type: String,
     },
