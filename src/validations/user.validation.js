@@ -6,12 +6,11 @@ const addUser = {
     Email: Joi.string().email().required(),
     Name: Joi.string().required(),
     UserName: Joi.string().required(),
-    UserType: Joi.string().required(),
+    UserType: Joi.number().required(),
     Phone: Joi.string().required(),
-    City: Joi.string().required(),
-    Password: Joi.string().required(),
-    Permission: Joi.string().required(),
+    Permission: Joi.array().required(),
     Branch: Joi.string().required(),
+    menuPermissions: Joi.array().required(),
   }),
 };
 
