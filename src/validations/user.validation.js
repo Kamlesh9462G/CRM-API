@@ -8,7 +8,6 @@ const addUser = {
     UserName: Joi.string().required(),
     UserType: Joi.number().required(),
     Phone: Joi.string().required(),
-    Permission: Joi.array().required(),
     Branch: Joi.string().required(),
     menuPermissions: Joi.array().required(),
   }),

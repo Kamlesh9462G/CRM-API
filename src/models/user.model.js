@@ -3,10 +3,6 @@ const bcrypt = require("bcrypt");
 
 const userSchema = mongoose.Schema(
   {
-    // serialNumber: {
-    //   type: Number,
-    //   unique: true,
-    // },
     parentId: {
       type: mongoose.Schema.Types.ObjectId,
       default: null,
