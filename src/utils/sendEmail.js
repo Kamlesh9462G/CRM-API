@@ -82,9 +82,7 @@ const sendGreetingEmailToUser = async (email, name, link) => {
 
     await transporter.sendMail(mailOptions);
   } catch (error) {
-    return res.status(500).json({
-      message: error.message,
-    });
+   console.log(error.message)
   }
 };
 
