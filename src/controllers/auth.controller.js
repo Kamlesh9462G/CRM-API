@@ -62,7 +62,7 @@ const signupAdmin = async (req, res) => {
       req.body["Password"] = "admin@123";
 
       let newAdmin = await authService.signupAdmin(req.body);
-      newAdmin['parentId'] = newAdmin._id;
+      newAdmin['parentId'] = decoded.userId;
       await newAdmin.save();
 
       return res.status(httpStatus.CREATED).json({
