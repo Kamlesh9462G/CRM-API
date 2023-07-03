@@ -13,7 +13,6 @@ const userSchema = mongoose.Schema(
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      unique: true,
       default: null,
     },
     companyName: {
