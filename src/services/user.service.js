@@ -123,6 +123,11 @@ const getAllAdminsNew = async () => {
         Phone: 1,
         City: 1,
         active: 1,
+        menuPermissions: 1,
+        teamSize: 1,
+        numberOfUsers: 1,
+        validupTo: 1,
+        webURL: 1,
       },
     },
     {
@@ -152,6 +157,11 @@ const getAllAdminsNew = async () => {
               Phone: 1,
               City: 1,
               active: 1,
+              menuPermissions: 1,
+              teamSize: 1,
+              numberOfUsers: 1,
+              validupTo: 1,
+              webURL: 1,
             },
           },
         ],
@@ -175,5 +185,5 @@ module.exports = {
   signOutUser,
   getUserById,
   getAllAdmins,
-  getAllAdminsNew
+  getAllAdminsNew,
 };
