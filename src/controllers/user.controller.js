@@ -21,6 +21,7 @@ const addUser = catchAsync(async (req, res) => {
   req.body["UserType"] = 3;
   req.body["Permission"] = req.body.Permission;
   req.body["parentId"] = req.user.userId;
+  req.body["Password"] = "user@123";
   const addUser = await userService.addUser(req.body);
 
   let setNewPasswordToken = crypto.randomBytes(32).toString("hex");
