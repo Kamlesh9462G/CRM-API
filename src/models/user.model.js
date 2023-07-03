@@ -13,7 +13,6 @@ const userSchema = mongoose.Schema(
     },
     companyName: {
       type: String,
-      unique: true,
     },
     Name: {
       type: String,
