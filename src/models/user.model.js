@@ -9,7 +9,6 @@ const userSchema = mongoose.Schema(
     // },
     parentId: {
       type: mongoose.Schema.Types.ObjectId,
-      unique: true,
       default: null,
     },
     userId: {
