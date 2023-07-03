@@ -21,6 +21,9 @@ const userSchema = mongoose.Schema(
     UserName: {
       type: String,
     },
+    UserProfile: {
+      type: String,
+    },
     UserType: {
       type: Number,
       enum: [1, 2, 3], //1==>super admin,2==>admin,3==>user

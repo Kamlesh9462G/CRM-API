@@ -11,6 +11,7 @@ const addUser = {
     Phone: Joi.string().required(),
     Branch: Joi.string().required(),
     menuPermissions: Joi.array().required(),
+    UserProfile:Joi.string().required()
   }),
 };
 
