@@ -2,32 +2,32 @@ const mongoose = require("mongoose");
 const statusModel = require("../models/status.model");
 const httpStatus = require("http-status");
 const { statusService } = require("../services");
-
-const addStatus = async (req, res) => {
+const catchAsync = require("../utils/catchAsync");
+const addStatus = catchAsync(async (req, res) => {
   const status = await statusService.addStatus(req.body);
 
   return res.status(httpStatus.CREATED).json({
     message: "status added succssfully!!",
     Data: status,
   });
-};
-const updateStatus = async (req, res) => {
+});
+const updateStatus = catchAsync(async (req, res) => {
   const status = await statusService.updateStatus(req.params.id, req.body);
 
   return res.status(httpStatus.OK).json({
     message: "status updated succssfully!!",
     Data: status,
   });
-};
-const deleteStatus = async (req, res) => {
+});
+const deleteStatus = catchAsync(async (req, res) => {
   const status = await statusService.deleteStatus(req.params.id);
 
   return res.status(httpStatus.OK).json({
     message: "status deleted succssfully!!",
     Data: status,
   });
-};
-const getStatus = async (req, res) => {
+});
+const getStatus = catchAsync(async (req, res) => {
   let filter = {};
   if (req.query._id) {
     filter["_id"] = req.query._id;
@@ -38,8 +38,8 @@ const getStatus = async (req, res) => {
     message: "status",
     Data: status,
   });
-};
-const getStatusById = async (req, res) => {
+});
+const getStatusById = catchAsync(async (req, res) => {
   try {
     const status = await statusModel.findById(req.params.id);
     if (status) {
@@ -50,7 +50,7 @@ const getStatusById = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-};
+});
 
 module.exports = {
   addStatus,

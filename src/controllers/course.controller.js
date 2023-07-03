@@ -3,8 +3,8 @@ const courseModel = require("../models/course.model");
 const httpStatus = require("http-status");
 const { courseService } = require("../services");
 const {setCache,deleteCache} = require('../utils/cacheSetterDeleter')
-
-const addCourse = async (req, res) => {
+const catchAsync = require('../utils/catchAsync')
+const addCourse = catchAsync(async (req, res) => {
   const redisClient = req.app.get("redisClient");
   const course = await courseService.addCourse(req.body);
   await  deleteCache(redisClient,req.originalUrl)
@@ -12,8 +12,8 @@ const addCourse = async (req, res) => {
     message: "course added succssfully!!",
     Data: course,
   });
-};
-const updateCourse = async (req, res) => {
+});
+const updateCourse = catchAsync(async (req, res) => {
   const redisClient = req.app.get("redisClient");
   const course = await courseService.updateCourse(req.params.id, req.body);
   await  deleteCache(redisClient,req.originalUrl)
@@ -21,8 +21,8 @@ const updateCourse = async (req, res) => {
     message: "course updated succssfully!!",
     Data: course,
   });
-};
-const deleteCourse = async (req, res) => {
+});
+const deleteCourse = catchAsync(async (req, res) => {
   const redisClient = req.app.get("redisClient");
 
   const course = await courseService.deleteCourse(req.params.id);
@@ -32,8 +32,8 @@ const deleteCourse = async (req, res) => {
     message: "course deleted succssfully!!",
     Data: course,
   });
-};
-const getCourse = async (req, res) => {
+});
+const getCourse = catchAsync(async (req, res) => {
   const redisClient = req.app.get("redisClient");
 
   let filter = {};
@@ -49,8 +49,8 @@ const getCourse = async (req, res) => {
     message: "courses",
     Data: course,
   });
-};
-const getCourseById = async (req, res) => {
+});
+const getCourseById = catchAsync(async (req, res) => {
   try {
     const course = await courseModel.findById(req.params.id);
     if (course) {
@@ -61,7 +61,7 @@ const getCourseById = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-};
+});
 
 module.exports = {
   addCourse,

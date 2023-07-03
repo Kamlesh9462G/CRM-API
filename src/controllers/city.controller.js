@@ -2,32 +2,32 @@ const mongoose = require("mongoose");
 const cityModel = require("../models/city.model");
 const httpStatus = require("http-status");
 const { cityService } = require("../services");
-
-const addCity = async (req, res) => {
+const catchAsync = require('../utils/catchAsync')
+const addCity = catchAsync(async (req, res) => {
   const city = await cityService.addCity(req.body);
 
   return res.status(httpStatus.CREATED).json({
     message: "city added succssfully!!",
     Data: city,
   });
-};
-const updateCity = async (req, res) => {
+});
+const updateCity = catchAsync(async (req, res) => {
   const city = await cityService.updateCity(req.params.id, req.body);
 
   return res.status(httpStatus.OK).json({
     message: "city updated succssfully!!",
     Data: city,
   });
-};
-const deleteCity = async (req, res) => {
+});
+const deleteCity = catchAsync(async (req, res) => {
   const city = await cityService.deleteCity(req.params.id);
 
   return res.status(httpStatus.OK).json({
     message: "city deleted succssfully!!",
     Data: city,
   });
-};
-const getCity = async (req, res) => {
+});
+const getCity = catchAsync(async (req, res) => {
   let filter = {};
   if (req.query._id) {
     filter["_id"] = req.query._id;
@@ -38,8 +38,8 @@ const getCity = async (req, res) => {
     message: "city",
     Data: city,
   });
-};
-const getCityById = async (req, res) => {
+});
+const getCityById = catchAsync(async (req, res) => {
   try {
     const city = await cityModel.findById(req.params.id);
     if (city) {
@@ -50,7 +50,7 @@ const getCityById = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-};
+});
 
 module.exports = {
   addCity,

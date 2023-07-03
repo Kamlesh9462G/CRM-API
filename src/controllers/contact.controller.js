@@ -1,6 +1,7 @@
 const { contactService } = require("../services");
+const catchAsync = require('../utils/catchAsync')
 
-const addContact = async (req, res) => {
+const addContact = catchAsync(async (req, res) => {
   const { contacts } = req.body;
   if (contacts.length > 0) {
     for (let contact of contacts) {
@@ -11,15 +12,15 @@ const addContact = async (req, res) => {
     message: "success",
   });
   const contact = await contactService.addContact();
-};
-const getContacts = async (req, res) => {
+});
+const getContacts = catchAsync(async (req, res) => {
   const ctctData = await contactService.getContacts();
 
   return res.status(200).json({
     message: "success",
     Data: ctctData,
   });
-};
+});
 
 module.exports = {
   addContact,

@@ -59,10 +59,10 @@ const sendGreetingEmailToUser = async (email, name, link) => {
 
   const handlebarOptions = {
     viewEngine: {
-      partialsDir: path.resolve("./src/views/"),
+      partialsDir: path.resolve("./src/views"),
       defaultLayout: false,
     },
-    viewPath: path.resolve("./src/views/"),
+    viewPath: path.resolve("./src/views"),
   };
 
   var mailOptions = {

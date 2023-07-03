@@ -236,8 +236,7 @@ const getLeads = catchAsync(async (req, res) => {
     });
   } catch (error) {}
 });
-
-const getLeadById = async (req, res) => {
+const getLeadById = catchAsync(async (req, res) => {
   try {
     let obj = {};
     const lead = await leadService.getLeadById(req.params.id);
@@ -315,9 +314,8 @@ const getLeadById = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-};
-
-const getNewLeads = async (req, res) => {
+});
+const getNewLeads = catchAsync(async (req, res) => {
   const {
     keyword,
     City,
@@ -414,8 +412,7 @@ const getNewLeads = async (req, res) => {
     Data: docs,
     ...otherFields,
   });
-};
-
+});
 // const getLeads = catchAsync(async (req, res) => {
 //   let filter = {};
 //   if (req.query._id) {
@@ -428,8 +425,7 @@ const getNewLeads = async (req, res) => {
 //     Data: leads,
 //   });
 // });
-
-const getCourse_Branch_UserData = async (req, res) => {
+const getCourse_Branch_UserData = catchAsync(async (req, res) => {
   try {
     const [course, branch, users] = await Promise.all([
       CourseModel.find({})
@@ -457,9 +453,9 @@ const getCourse_Branch_UserData = async (req, res) => {
     console.error(err);
     return res.status(500).json({ error: "Internal Server Error" });
   }
-};
+});
 
-const addLeadLogs = async (req, res) => {
+const addLeadLogs = catchAsync(async (req, res) => {
   const { leadId } = req.body;
   console.log(leadId);
   const lead = await leadService.getLeadById(leadId);
@@ -474,9 +470,9 @@ const addLeadLogs = async (req, res) => {
   return res.status(httpStatus.CREATED).json({
     message: "success",
   });
-};
+});
 
-const getDuplicateLeads = async (req, res) => {
+const getDuplicateLeads = catchAsync(async (req, res) => {
   const { Email, Phone1, Phone2 } = req.body;
   let filter = {
     $or: [],
@@ -508,9 +504,9 @@ const getDuplicateLeads = async (req, res) => {
       lead: [],
     });
   }
-};
+});
 
-const TodaysFollowupLeads = async (req, res) => {
+const TodaysFollowupLeads = catchAsync(async (req, res) => {
   console.log("came herer");
 
   console.log(req.user.role);
@@ -570,9 +566,9 @@ const TodaysFollowupLeads = async (req, res) => {
     Data: docs,
     ...otherFields,
   });
-};
+});
 
-const getLeadLogs = async (req, res) => {
+const getLeadLogs = catchAsync(async (req, res) => {
   const { leadId } = req.body;
 
   const lead = await leadService.getLeadById(leadId);
@@ -600,8 +596,8 @@ const getLeadLogs = async (req, res) => {
     message: "success",
     Data: leadLogs,
   });
-};
-const searchDuplicateLeads = async (req, res) => {
+});
+const searchDuplicateLeads = catchAsync(async (req, res) => {
   let { keyword } = req.query;
 
   if (!keyword) {
@@ -639,7 +635,7 @@ const searchDuplicateLeads = async (req, res) => {
     message: "success",
     Data: searchedLeads,
   });
-};
+});
 
 module.exports = {
   addLead,

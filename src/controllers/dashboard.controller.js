@@ -1,30 +1,30 @@
 const { dashboardService, leadService, userService } = require("../services");
+const catchAsync = require("../utils/catchAsync");
 
-const getLeadsDetail = async (req, res) => {
+const getLeadsDetail = catchAsync(async (req, res) => {
   let leads = await dashboardService.getLeadsDetail();
 
   return res.status(200).json({
     message: "Leads",
     Data: leads,
   });
-};
-const getAnalyticsDetail = async (req, res) => {
+});
+const getAnalyticsDetail = catchAsync(async (req, res) => {
   let analytics = await dashboardService.getAnalyticsDetail();
   return res.status(200).json({
     message: "Leads",
     Data: analytics,
   });
-};
-const getCallDetails = async (req, res) => {
-};
-const getSourceDetails = async (req, res) => {
+});
+const getCallDetails = catchAsync(async (req, res) => {});
+const getSourceDetails = catchAsync(async (req, res) => {
   let source = await dashboardService.getSourceDetails();
   return res.status(200).json({
     message: "Leads",
     Data: source,
   });
-};
-const getLeadsCount = async (req, res) => {
+});
+const getLeadsCount = catchAsync(async (req, res) => {
   // {
   //         AssignTo: {
   //           $in: ["Saurabh"],
@@ -84,7 +84,7 @@ const getLeadsCount = async (req, res) => {
     message: "successs",
     Data: respp,
   });
-};
+});
 
 module.exports = {
   getLeadsDetail,

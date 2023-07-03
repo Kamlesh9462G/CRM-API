@@ -7,8 +7,8 @@ const ApiError = require("../utils/ApiError");
 const { sendEmail, sendForgotPasswordEmail } = require("../utils/sendEmail");
 const httpStatus = require("http-status");
 const { strict } = require("assert");
-
-const signupAdmin = async (req, res) => {
+const catchAsync = require('../utils/catchAsync')
+const signupAdmin = catchAsync(async (req, res) => {
   const { Email, UserType } = req.body;
   /**
    * Creating Super Admin
@@ -76,7 +76,7 @@ const signupAdmin = async (req, res) => {
       })
     }
   }
-};
+});
 // Function to generate a unique jti value
 function generateJTI() {
   const timestamp = Date.now().toString();
@@ -84,7 +84,7 @@ function generateJTI() {
   const jti = timestamp + random;
   return jti;
 }
-const signIn = async (req, res) => {
+const signIn = catchAsync(async (req, res) => {
   const { Email, Password, type } = req.body;
 
   const user = await userService.getUserByEmail(Email);
@@ -169,9 +169,9 @@ const signIn = async (req, res) => {
     token: token,
     userData,
   });
-};
+});
 
-const signout = async (req, res) => {
+const signout = catchAsync(async (req, res) => {
   console.log(req.user)
   const token =
     req.cookies?.token || req.headers["authorization"]?.split(" ")[1];
@@ -217,9 +217,9 @@ const signout = async (req, res) => {
       message: "Unauthorized",
     });
   }
-};
+});
 
-const createPin = async (req, res) => {
+const createPin = catchAsync(async (req, res) => {
   const { _id } = req.user;
   const { pin, confirmPin } = req.body;
 
@@ -266,8 +266,8 @@ const createPin = async (req, res) => {
     user: user,
     _id: _id,
   });
-};
-const loginWithPin = async (req, res) => {
+});
+const loginWithPin = catchAsync(async (req, res) => {
   const { _id, pin } = req.body;
 
   //const user = await users.findOne({ _id: _id });
@@ -313,8 +313,8 @@ const loginWithPin = async (req, res) => {
       token: token.access.token,
     });
   }
-};
-const requestForgotPassword = async (req, res) => {
+});
+const requestForgotPassword = catchAsync(async (req, res) => {
   const user = await userService.getUserByEmail(req.body.Email);
   if (!user) {
     return res.status(400).json({
@@ -349,8 +349,8 @@ const requestForgotPassword = async (req, res) => {
     message: `Email sent to ${user.Email} successfully`,
     link: forgotPasswordUrl,
   });
-};
-const ForgotPassword = async (req, res) => {
+});
+const ForgotPassword = catchAsync(async (req, res) => {
   const { token, userId, password } = req.body;
 
   const tokenDoc = await tokenService.getTokenByUserId(userId);
@@ -383,7 +383,7 @@ const ForgotPassword = async (req, res) => {
   return res.status(200).json({
     message: "password reseted successfully!!",
   });
-};
+});
 
 module.exports = {
   signupAdmin,

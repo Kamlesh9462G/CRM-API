@@ -46,22 +46,22 @@ const addUser = catchAsync(async (req, res) => {
     Data: addUser,
   });
 });
-const updateUser = async (req, res) => {
+const updateUser = catchAsync(async (req, res) => {
   const updateUser = await userService.updateUser(req.params.id, req.body);
   return res.status(httpStatus.CREATED).json({
     message: "User updated successfully!!",
     Data: updateUser,
   });
-};
-const deleteUser = async (req, res) => {
+});
+const deleteUser = catchAsync(async (req, res) => {
   const deleteUser = await userService.deleteUser(req.params.userId);
   return res.status(httpStatus.CREATED).json({
     message: "User deleted successfully!!",
     Data: deleteUser,
   });
-};
-const getUsers = async (req, res) => {
-  console.log(req.user)
+});
+const getUsers = catchAsync(async (req, res) => {
+  console.log(req.user);
   let filter = {};
   filter["UserType"] = 3;
 
@@ -81,12 +81,11 @@ const getUsers = async (req, res) => {
   //   },
   // ];
   if (req.user.UserType == 2) {
-    console.log("inside if")
+    console.log("inside if");
     filter["parentId"] = new ObjectId(req.user.userId);
-    
   }
   if (req.user.UserType == 3) {
-    console.log("inside if if")
+    console.log("inside if if");
     filter["userId"] = new ObjectId(req.user._id);
     filter["parentId"] = new ObjectId(req.user.parentId);
   }
@@ -111,8 +110,8 @@ const getUsers = async (req, res) => {
     message: "success!!",
     Data: users,
   });
-};
-const getUserById = async (req, res) => {
+});
+const getUserById = catchAsync(async (req, res) => {
   try {
     const user = await userModel.findById(req.params.id);
     if (user) {
@@ -123,7 +122,7 @@ const getUserById = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-};
+});
 
 module.exports = {
   addUser,
