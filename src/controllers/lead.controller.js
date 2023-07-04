@@ -42,6 +42,11 @@ const updateLead = catchAsync(async (req, res) => {
   });
 });
 const deleteLead = catchAsync(async (req, res) => {
+  if (req.user.UserType === 3) {
+    return res.status(httpStatus.UNAUTHORIZED).json({
+      message: "permission denied",
+    });
+  }
   const deletedLead = await leadService.deleteLead(req.params.id);
   return res.status(httpStatus.OK).json({
     statusCode: httpStatus.OK,

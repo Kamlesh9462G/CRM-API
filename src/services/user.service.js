@@ -99,14 +99,10 @@ const getAllAdmins = async () => {
     },
   ]);
 };
-const getAllAdminsNew = async () => {
+const getAllAdminsNew = async (filter) => {
   return await users.aggregate([
     {
-      $match: {
-        UserType: {
-          $in: [2, 3],
-        },
-      },
+      $match: filter
     },
     {
       $project: {

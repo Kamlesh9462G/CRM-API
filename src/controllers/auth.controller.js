@@ -7,7 +7,7 @@ const ApiError = require("../utils/ApiError");
 const { sendEmail, sendForgotPasswordEmail } = require("../utils/sendEmail");
 const httpStatus = require("http-status");
 const { strict } = require("assert");
-const catchAsync = require('../utils/catchAsync')
+const catchAsync = require("../utils/catchAsync");
 const signupAdmin = catchAsync(async (req, res) => {
   const { Email, UserType } = req.body;
   /**
@@ -16,7 +16,7 @@ const signupAdmin = catchAsync(async (req, res) => {
   if (UserType == 1) {
     const superAdmin = await userService.getUserByEmail(Email);
 
-    if(superAdmin){
+    if (superAdmin) {
       return res.status(httpStatus.BAD_REQUEST).json({
         message: `user already exists with this email: ${Email}`,
       });
@@ -28,7 +28,6 @@ const signupAdmin = catchAsync(async (req, res) => {
     return res.status(httpStatus.CREATED).json({
       message: "super admin created successfully!!",
     });
-
   }
   /**
    * Creating Admin
@@ -41,11 +40,13 @@ const signupAdmin = catchAsync(async (req, res) => {
       });
     }
     try {
-      console.log("inside try")
+      console.log("inside try");
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      console.log("decoded")
-      console.log(decoded)
-      const superAdmin = await users.findOne({_id:decoded.userId,UserType:1}).lean();
+      console.log("decoded");
+      console.log(decoded);
+      const superAdmin = await users
+        .findOne({ _id: decoded.userId, UserType: 1 })
+        .lean();
 
       if (!superAdmin) {
         throw new ApiError(httpStatus.UNAUTHORIZED, "unauthorized");
@@ -53,7 +54,7 @@ const signupAdmin = catchAsync(async (req, res) => {
 
       const admin = await userService.getUserByEmail(Email);
 
-      if(admin){
+      if (admin) {
         return res.status(httpStatus.BAD_REQUEST).json({
           message: `user already exists with this email ${Email}`,
         });
@@ -62,18 +63,17 @@ const signupAdmin = catchAsync(async (req, res) => {
       req.body["Password"] = "admin@123";
 
       let newAdmin = await authService.signupAdmin(req.body);
-      newAdmin['parentId'] = decoded.userId;
+      newAdmin["parentId"] = decoded.userId;
       await newAdmin.save();
 
       return res.status(httpStatus.CREATED).json({
         message: "admin created successfully!!",
       });
-
     } catch (error) {
       console.log(error.message);
       return res.status(500).json({
-        message:error.message
-      })
+        message: error.message,
+      });
     }
   }
 });
@@ -88,6 +88,7 @@ const signIn = catchAsync(async (req, res) => {
   const { Email, Password, type } = req.body;
 
   const user = await userService.getUserByEmail(Email);
+  console.log(user)
 
   if (!user) {
     return res.status(httpStatus.BAD_REQUEST).json({
@@ -118,6 +119,7 @@ const signIn = catchAsync(async (req, res) => {
 
   let tokenPayload = {
     userId: user._id,
+    parentId: user.UserType == 3 ? user.parentId : null,
     appType: type == "web" ? "web" : "app",
     jti: jti,
     role: user.role,
@@ -125,7 +127,7 @@ const signIn = catchAsync(async (req, res) => {
     UserType: user.UserType,
   };
 
-  const token =  tokenService.generateToken(tokenPayload);
+  const token = tokenService.generateToken(tokenPayload);
 
   await new loginLogs({
     userId: user._id,
@@ -159,7 +161,7 @@ const signIn = catchAsync(async (req, res) => {
   userData["Name"] = user.Name;
   userData["Email"] = user.Email;
   userData["role"] = user.role;
-  userData["UserType"] =  user && user.UserType;
+  userData["UserType"] = user && user.UserType;
   userData["pin"] = user.pin != null ? true : false;
   userData["menuPermissions"] = user.menuPermissions;
 
@@ -172,17 +174,17 @@ const signIn = catchAsync(async (req, res) => {
 });
 
 const signout = catchAsync(async (req, res) => {
-  console.log(req.user)
+  console.log(req.user);
   const token =
     req.cookies?.token || req.headers["authorization"]?.split(" ")[1];
   if (token) {
     let { type } = req.body;
     // Find the user by ID
-    if(req.user.UserType == 1){
+    if (req.user.UserType == 1) {
       req.user.userId = req.user._id;
     }
     const user = await userService.getUserById(req.user.userId);
-    console.log(user)
+    console.log(user);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }

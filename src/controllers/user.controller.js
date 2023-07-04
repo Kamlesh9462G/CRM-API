@@ -10,6 +10,11 @@ const { sendGreetingEmailToUser } = require("../utils/sendEmail");
 
 const addUser = catchAsync(async (req, res) => {
   console.log(req.user);
+  if (req.user.UserType == 3 || req.user.UserType == 1) {
+    return res.status(httpStatus.UNAUTHORIZED).json({
+      message: "permission denied",
+    });
+  }
   const { Email } = req.body;
   const user = await userService.getUserByEmail(Email);
   if (user) {

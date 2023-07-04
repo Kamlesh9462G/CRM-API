@@ -2,8 +2,15 @@ const mongoose = require("mongoose");
 const cityModel = require("../models/city.model");
 const httpStatus = require("http-status");
 const { cityService } = require("../services");
-const catchAsync = require('../utils/catchAsync')
+const catchAsync = require("../utils/catchAsync");
 const addCity = catchAsync(async (req, res) => {
+  if (req.user.UserType == 2) {
+    req.body["parentId"] = req.user.userId;
+  }
+  if (req.user.UserType == 3) {
+    (req.body["parentId"] = req.user.parentId),
+      (req.body["userId"] = req.user.userId);
+  }
   const city = await cityService.addCity(req.body);
 
   return res.status(httpStatus.CREATED).json({
@@ -29,6 +36,14 @@ const deleteCity = catchAsync(async (req, res) => {
 });
 const getCity = catchAsync(async (req, res) => {
   let filter = {};
+  if (req.user.UserType === 2) {
+    filter["parentId"] = req.user.userId;
+  }
+  if (req.user.UserType === 3) {
+    filter["userId"] = req.user.userId;
+    filter["parentId"] = req.user.parentId;
+  }
+
   if (req.query._id) {
     filter["_id"] = req.query._id;
   }

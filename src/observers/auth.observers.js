@@ -28,8 +28,8 @@ class CRUDObserver {
   }
 }
 
-const subject = new ObservableSubject();
+const auth = new ObservableSubject();
 const observer = new CRUDObserver();
-subject.addObserver(observer);
+auth.addObserver(observer);
 
-module.exports = { subject };
+module.exports = { auth };

@@ -4,6 +4,13 @@ const httpStatus = require("http-status");
 const { branchService } = require("../services");
 const catchAsync = require("../utils/catchAsync");
 const addBranch = catchAsync(async (req, res) => {
+  if (req.user.UserType == 2) {
+    req.body["parentId"] = req.user.userId;
+  }
+  if (req.user.UserType == 3) {
+    (req.body["parentId"] = req.user.parentId),
+      (req.body["userId"] = req.user.userId);
+  }
   const branch = await branchService.addBranch(req.body);
 
   return res.status(httpStatus.CREATED).json({
@@ -29,6 +36,14 @@ const deleteBranch = catchAsync(async (req, res) => {
 });
 const getBranch = catchAsync(async (req, res) => {
   let filter = {};
+  if (req.user.UserType === 2) {
+    filter["parentId"] = req.user.userId;
+  }
+  if (req.user.UserType === 3) {
+    filter["userId"] = req.user.userId;
+    filter["parentId"] = req.user.parentId;
+  }
+
   if (req.query._id) {
     filter["_id"] = req.query._id;
   }
