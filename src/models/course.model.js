@@ -2,9 +2,13 @@ const mongoose = require("mongoose");
 
 const courseSchema = mongoose.Schema(
   {
-    serialNumber: {
-      type: Number,
-      unique: true,
+    parentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: null,
+    },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: null,
     },
     CourseName: {
       type: String,

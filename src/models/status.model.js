@@ -2,9 +2,13 @@ const mongoose = require("mongoose");
 
 const statusSchema = mongoose.Schema(
   {
-    serialNumber: {
-      type: Number,
-      unique: true,
+    parentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: null,
+    },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: null,
     },
     StatusName: {
       type: String,

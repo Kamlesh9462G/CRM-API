@@ -6,6 +6,13 @@ const {setCache,deleteCache} = require('../utils/cacheSetterDeleter')
 const catchAsync = require('../utils/catchAsync')
 const addCourse = catchAsync(async (req, res) => {
   const redisClient = req.app.get("redisClient");
+  if (req.user.UserType == 2) {
+    req.body["parentId"] = req.user.userId;
+  }
+  if (req.user.UserType == 3) {
+    (req.body["parentId"] = req.user.parentId),
+      (req.body["userId"] = req.user.userId);
+  }
   const course = await courseService.addCourse(req.body);
   await  deleteCache(redisClient,req.originalUrl)
   return res.status(httpStatus.CREATED).json({
@@ -37,6 +44,14 @@ const getCourse = catchAsync(async (req, res) => {
   const redisClient = req.app.get("redisClient");
 
   let filter = {};
+  if (req.user.UserType === 2) {
+    filter["parentId"] = req.user.userId;
+  }
+  if (req.user.UserType === 3) {
+    filter["userId"] = req.user.userId;
+    filter["parentId"] = req.user.parentId;
+  }
+
   if (req.query._id) {
     filter["_id"] = req.query._id;
   }

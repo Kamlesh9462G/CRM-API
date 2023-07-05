@@ -1,11 +1,11 @@
 // controllers/notesController.js
 
-const authServiceNew = require('../../services/auth.service');
+const authServiceNew = require('../../services/v2/auth.service');
 
-class NotesController {
-  async create(req, res) {
+class authController {
+  async signupAdmin(req, res) {
     try {
-      const note = await authServiceNew.createNote(req.body);
+      const note = await authServiceNew.signupAdmin(req.body);
       res.status(201).json(note);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -40,4 +40,4 @@ class NotesController {
   }
 }
 
-module.exports = new NotesController();
+module.exports = new authController();
