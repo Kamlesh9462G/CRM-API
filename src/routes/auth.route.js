@@ -3,13 +3,14 @@ const router = express.Router();
 
 const { profileImage } = require("../middlewares/upload");
 const auth = require("../middlewares/auth");
-
+const {authValidation} = require('../validations')
 const authController = require("../controllers/auth.controller");
 const validate = require("../middlewares/validate");
 
 router.post(
   "/signup",
   //    profileImage.single('file'),
+  validate(authValidation.registerAdmin),
   authController.signupAdmin
 );
 

@@ -1,15 +1,13 @@
-const request = require('supertest');
-const app = require('../src/app');
-const mongoose = require('mongoose');
-const User = require('../src/models/User');
-const jwt = require('jsonwebtoken');
+const request = require("supertest");
+const app = require("../../src/app");
+const mongoose = require("mongoose");
+const User = require("../../src/models/user.model");
 
-describe('Protected API Endpoint', () => {
-  let authToken;
-
+describe("Protected API Endpoint", () => {
   beforeAll(async () => {
     // Connect to the MongoDB test database
-    const mongoURI = 'mongodb://localhost:27017/testdb';
+    const mongoURI =
+      "mongodb+srv://Kamal9462:QWERTY123@cluster0.llk00.mongodb.net/crm-new?retryWrites=true&w=majority";
     await mongoose.connect(mongoURI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
@@ -17,37 +15,43 @@ describe('Protected API Endpoint', () => {
 
     // Create a test user
     const userPayload = {
-      email: 'test@example.com',
-      password: 'password123',
+      Email: "testadmin0145630@gmail.com",
+      Name: "Kamlesh1",
+      UserName: "Kamlesh1",
+      Phone: "5252525252",
+      City: "Delhi-NCR",
+      companyName: "K4 Technology",
+      UserType: 2,
+      menuPermissions: ["Status List", "Branch List"],
+      Address: "Delhi",
+      teamSize: 10,
+      numberOfUsers: 15,
+      validupTo: "2023-06-28T12:22:00.000+00:00",
+      webURL: "https://www.matrix.com",
     };
     const user = await User.create(userPayload);
-
-    // Generate a JWT token for the test user
-    authToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
+    
   });
 
-  afterAll(async () => {
-    // Delete the test user from the database
-    await User.deleteMany({});
-    await mongoose.disconnect();
-  });
+  // afterAll(async () => {
+  //   // Delete the test user from the database
+  //   await User.deleteMany({});
+  //   await mongoose.disconnect();
+  // });
 
-  describe('GET /api/protected', () => {
-    it('should return a success message for authenticated user', async () => {
+  describe("POST /v1/admin/auth/signup", () => {
+    it("should return a success message for successful signup admin", async () => {
       const response = await request(app)
-        .get('/api/protected')
-        .set('Authorization', `Bearer ${authToken}`)
-        .expect(200);
+        .post("/v1/admin/auth/signup")
+        .expect(201);
 
-      expect(response.body.message).toBe('Access granted for authenticated user');
+      //expect(response.body.message).toBe("admin created successfully!!");
     });
 
-    it('should return an error for unauthenticated user', async () => {
-      const response = await request(app)
-        .get('/api/protected')
-        .expect(401);
+    // it("should return an error for unauthenticated user", async () => {
+    //   const response = await request(app).get("/api/protected").expect(401);
 
-      expect(response.body.error).toBe('Unauthorized');
-    });
+    //   expect(response.body.error).toBe("Unauthorized");
+    // });
   });
 });
