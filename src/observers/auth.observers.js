@@ -1,5 +1,3 @@
-// observers/crudObserver.js
-
 const { Observable } = require("rxjs");
 
 class ObservableSubject extends Observable {
@@ -24,7 +22,6 @@ class ObservableSubject extends Observable {
 class CRUDObserver {
   update(data) {
     console.log("Received notification:", data);
-    // You can perform additional actions based on the CRUD operation here
   }
 }
 
