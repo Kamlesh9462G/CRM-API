@@ -1,5 +1,5 @@
 const { profileService } = require("../services");
-const catchAsync = require('../utils/catchAsync')
+const catchAsync = require("../utils/catchAsync");
 const getProfile = catchAsync(async (req, res) => {
   let { userId } = req.user;
   const profile = await profileService.getProfile(userId);
@@ -7,6 +7,7 @@ const getProfile = catchAsync(async (req, res) => {
     Data: profile,
   });
 });
+
 
 module.exports = {
   getProfile,

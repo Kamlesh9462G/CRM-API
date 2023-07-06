@@ -2,7 +2,7 @@ const Joi = require("joi");
 const { objectId } = require("./custom.validation");
 const addBranch = {
   body: Joi.object().keys({
-    branchName: Joi.string().custom(objectId).required(),
+    BranchName: Joi.string().custom(objectId).required(),
   }),
 };
 const updateBranch = {
@@ -10,13 +10,12 @@ const updateBranch = {
     id: Joi.string().custom(objectId).required(),
   }),
   body: Joi.object().keys({
-    branchName: Joi.string(),
+    BranchName: Joi.string(),
   }),
 };
-
 const deleteBranch = {
   params: Joi.object().keys({
-    id: Joi.string().custom(objectId),
+    id: Joi.string().custom(objectId).required(),
   }),
 };
 

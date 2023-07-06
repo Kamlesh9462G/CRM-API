@@ -88,7 +88,6 @@ const signIn = catchAsync(async (req, res) => {
   const { Email, Password, type } = req.body;
 
   const user = await userService.getUserByEmail(Email);
-  console.log(user);
 
   if (!user) {
     return res.status(httpStatus.BAD_REQUEST).json({
@@ -172,7 +171,6 @@ const signIn = catchAsync(async (req, res) => {
     userData,
   });
 });
-
 const signout = catchAsync(async (req, res) => {
   console.log(req.user);
   const token =
@@ -220,7 +218,6 @@ const signout = catchAsync(async (req, res) => {
     });
   }
 });
-
 const createPin = catchAsync(async (req, res) => {
   const { _id } = req.user;
   const { pin, confirmPin } = req.body;
@@ -386,6 +383,51 @@ const ForgotPassword = catchAsync(async (req, res) => {
     message: "password reseted successfully!!",
   });
 });
+const updatePassword = catchAsync(async (req, res) => {
+  const { currentPassword, newPassword, confirmPassword } = req.body;
+  const { userId } = req.user;
+  let { type } = req.body;
+
+  const user = await userService.getUserById(userId);
+  if (!user) {
+    return res.status(400).json({
+      message: "unauthorized",
+    });
+  }
+  const decPassord = await bcrypt.compare(currentPassword, user.Password);
+  if (!decPassord) {
+    return res.status(httpStatus.BAD_REQUEST).json({
+      message: "current password does not matched!",
+    });
+  }
+
+  // Remove the app type from user's app types
+  const index = user.appTypes.indexOf(type);
+  if (index !== -1) {
+    user.appTypes.splice(index, 1);
+  }
+
+  // Remove the corresponding jti from the appropriate array
+  if (type === "app") {
+    const jtiIndex = user.appJtis.indexOf(req.user.jti);
+    if (jtiIndex !== -1) {
+      user.appJtis;
+
+      user.appJtis.splice(jtiIndex, 1);
+    }
+  } else if (type === "web") {
+    const jtiIndex = user.webJtis.indexOf(req.user.jti);
+    if (jtiIndex !== -1) {
+      user.webJtis.splice(jtiIndex, 1);
+    }
+  }
+  user["Password"] = newPassword;
+  await user.save();
+
+  return res.status(httpStatus.OK).json({
+    message: "password succssfully updated!",
+  });
+});
 
 module.exports = {
   signupAdmin,
@@ -395,4 +437,5 @@ module.exports = {
   loginWithPin,
   requestForgotPassword,
   ForgotPassword,
+  updatePassword,
 };

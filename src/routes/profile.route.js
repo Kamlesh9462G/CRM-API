@@ -6,4 +6,5 @@ const auth = require("../middlewares/auth");
 const router = express.Router();
 
 router.route("/").get(auth,profileController.getProfile)
+
 module.exports = router;

@@ -63,6 +63,7 @@ const getUserById = async (userId) => {
     role: 1,
     webJtis: 1,
     appJtis: 1,
+    Password:1
   });
 };
 

@@ -17,5 +17,12 @@ const registerAdmin = {
     webURL: Joi.string().required(),
   }),
 };
+const loginAdmin = {
+  body: Joi.object().keys({
+    Email: Joi.string().required(),
+    Password: Joi.string().required(),
+    type: Joi.string().required(),
+  }),
+};
 
-module.exports = { registerAdmin };
+module.exports = { registerAdmin, loginAdmin };

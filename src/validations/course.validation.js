@@ -3,8 +3,8 @@ const { objectId } = require("./custom.validation");
 
 const addCourse = {
   body: Joi.object().keys({
-    courseName: Joi.string().custom(objectId).required(),
-    coursePrice: Joi.number().custom(objectId).required(),
+    CourseName: Joi.string().required(),
+    CourseValue: Joi.string().required(),
   }),
 };
 
@@ -13,8 +13,8 @@ const updateCourse = {
     id: Joi.string().custom(objectId).required(),
   }),
   body: Joi.object().keys({
-    courseName: Joi.string(),
-    coursePrice: Joi.number(),
+    courseName: Joi.string().required(),
+    coursePrice: Joi.string().required(),
   }),
 };
 

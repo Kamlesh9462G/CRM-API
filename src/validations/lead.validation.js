@@ -7,7 +7,23 @@ const object = Joi.object({
 });
 const addLead = {
   body: Joi.object().keys({
-    data:object
+    Name:Joi.string().required(),
+    EnquiryCourse:Joi.string().required(),
+    CoursePrice:Joi.string().required(),
+    Phone1:Joi.string().required(),
+    Phone2:Joi.string().required(),
+    Email:Joi.string().required(),
+    FollowupDate:Joi.string().required(),
+    EnquiryDate:Joi.string().required(),
+    Status:Joi.string().required(),
+    Branch:Joi.string().required(),
+    City:Joi.string().required(),
+    Source:Joi.string().required(),
+    AssignTo:Joi.string().required(),
+    location:Joi.string().required(),
+    image:Joi.string().required(),
+    Remark:Joi.string().required(),
+    Address:Joi.string().required(),
   }),
 };
 

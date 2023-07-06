@@ -5,13 +5,13 @@ const addUser = {
   body: Joi.object().keys({
     Email: Joi.string().email().required(),
     Name: Joi.string().required(),
-    City:Joi.string().required(),
+    City: Joi.string().required(),
     UserName: Joi.string().required(),
     UserType: Joi.number().required(),
     Phone: Joi.string().required(),
     Branch: Joi.string().required(),
     menuPermissions: Joi.array().required(),
-    UserProfile:Joi.string().required()
+    UserProfile: Joi.string().required(),
   }),
 };
 
@@ -20,16 +20,15 @@ const updateUser = {
     id: Joi.string().custom(objectId).required(),
   }),
   body: Joi.object().keys({
-    name: Joi.string(),
-    phoneNumber: Joi.string(),
-    email: Joi.string(),
-    username: Joi.string(),
-    branch: Joi.string(),
-    city: Joi.string(),
-    userProfile: Joi.string(),
-    permission: Joi.string(),
-    currentStatus: Joi.string(),
-    file: Joi.string(),
+    Email: Joi.string().email().required(),
+    Name: Joi.string().required(),
+    City: Joi.string().required(),
+    UserName: Joi.string().required(),
+    UserType: Joi.number().required(),
+    Phone: Joi.string().required(),
+    Branch: Joi.string().required(),
+    menuPermissions: Joi.array().required(),
+    UserProfile: Joi.string().required(),
   }),
 };
 

@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "pm2 start ecosystem.config.json --no-daemon",
-    "test": "jest -i --colors --verbose --detectOpenHandles"
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
