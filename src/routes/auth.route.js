@@ -10,7 +10,7 @@ const validate = require("../middlewares/validate");
 router.post(
   "/signup",
   //    profileImage.single('file'),
-  validate(authValidation.registerAdmin),
+  //validate(authValidation.registerAdmin),
   authController.signupAdmin
 );
 

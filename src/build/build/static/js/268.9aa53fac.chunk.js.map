@@ -1,1 +1,0 @@
-{"version":3,"file":"static/js/268.9aa53fac.chunk.js","mappings":"iIAMA,UAJgB,WACd,OAAOA,EAAAA,EAAAA,KAAA,OAAAC,SAAK,WACd,C","sources":["pages/leads/LogPage.tsx"],"sourcesContent":["import React from \"react\";\r\n\r\nconst LogPage = () => {\r\n  return <div>LogPage</div>;\r\n};\r\n\r\nexport default LogPage;\r\n"],"names":["_jsx","children"],"sourceRoot":""}
