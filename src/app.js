@@ -45,6 +45,7 @@ app.use("/v1/admin", adminRoutes);
 app.use("/v2/admin", adminRoutes);
 app.use("/v1/super-admin", superAdminRoutes);
 
+console.log((__dirname))
 app.use(express.static(path.join(__dirname, "/build")));
 app.get("*", (req, res) => {
   // return res.status(200).json({
