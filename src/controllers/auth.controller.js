@@ -86,12 +86,17 @@ function generateJTI() {
 }
 const signIn = catchAsync(async (req, res) => {
   const { Email, Password, type } = req.body;
-
+  let currDate = new Date();
   const user = await userService.getUserByEmail(Email);
 
   if (!user) {
     return res.status(httpStatus.BAD_REQUEST).json({
       message: "invalid email",
+    });
+  }
+  if (currDate > user.validupTo) {
+    return res.status(httpStatus.UNAUTHORIZED).json({
+      message: "Contract Validity period expired please contact to admin!",
     });
   }
   if (!user.active) {
