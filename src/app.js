@@ -45,12 +45,12 @@ app.use("/v1/admin", adminRoutes);
 app.use("/v2/admin", adminRoutes);
 app.use("/v1/super-admin", superAdminRoutes);
 
-app.use(express.static(path.join(__dirname, "/build/build")));
+app.use(express.static(path.join(__dirname, "/build")));
 app.get("*", (req, res) => {
   // return res.status(200).json({
   //   message:"success!!"
   // })
-  return res.sendFile(path.join(__dirname, "/build/build", "index.html"));
+  return res.sendFile(path.join(__dirname, "/build", "index.html"));
 });
 
 
