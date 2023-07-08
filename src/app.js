@@ -11,7 +11,10 @@ const ApiError = require("../src/utils/ApiError");
 const { errorHandler, errorConverter } = require("../src/middlewares/error");
 
 const adminRoutes = require("./routes/index");
-const superAdminRoutes = require('./routes/super-admin/index')
+const superAdminRoutes = require('./routes/super-admin/index');
+
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('../src/docs/swagger.json');
 
 const app = express();
 
@@ -21,6 +24,8 @@ app.use(compression())
 app.use(morgan.successHandler);
 app.use(morgan.errorHandler);
 
+// Serve the Swagger UI at /api-docs
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // enable cors
 app.use(cors());
