@@ -88,6 +88,7 @@ const signIn = catchAsync(async (req, res) => {
   const { Email, Password, type } = req.body;
   let currDate = new Date();
   const user = await userService.getUserByEmail(Email);
+  console.log(user)
 
   if (!user) {
     return res.status(httpStatus.BAD_REQUEST).json({

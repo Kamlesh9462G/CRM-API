@@ -62,6 +62,19 @@ if (cluster.isMaster) {
         const httpServer = http.createServer(app);
         server = httpServer.listen(PORT, () => {
           console.log(`HTTP Server running on port ${PORT}`);
+
+          //"30 5 * * *"
+          const job = new CronJob("30 5 * * *", function () {
+            generateExcelSheet();
+            try {
+              if (fs.existsSync("./leadDate.xlsx")) {
+                fs.unlinkSync("./leadDate.xlsx");
+              }
+            } catch (err) {
+              console.error(err);
+            }
+          });
+          job.start();
           // client.connect().then(()=> {
           //   console.log('redis is connected')
           // })
@@ -112,41 +125,16 @@ if (cluster.isMaster) {
 //         console.log(`HTTPS Server running on port  ${PORT}`);
 //       });
 //     }
-//       //   const job = new CronJob("30 5 * * *", function () {
-//       //   try {
-//       //     if (fs.existsSync("./leadDate.xlsx")) {
-//       //       fs.unlinkSync("./leadDate.xlsx");
-//       //     }
-//       //     generateExcelSheet();
-//       //   } catch (err) {
-//       //     console.error(err);
-//       //   }
-//       // });
-//       // job.start();
+//   const job = new CronJob("30 5 * * *", function () {
+//   try {
+//     if (fs.existsSync("./leadDate.xlsx")) {
+//       fs.unlinkSync("./leadDate.xlsx");
+//     }
+//     generateExcelSheet();
+//   } catch (err) {
+//     console.error(err);
+//   }
+// });
+// job.start();
 
 //   });
-
-// const getLoginDetails = async () => {
-//   try {
-//     sql.query(
-//       config,
-//       "select * from Tran_MachineRawPunch",
-//       async (err, rows) => {
-//         console.log(rows);
-//         const res = await axios.post(
-//           "http://3.110.163.161/v1/admin/at/at-data",
-//           rows
-//         );
-//         // const res=await axios.get('https://jsonplaceholder.typicode.com/todos');
-//         // const data=await res.data
-//         //    console.log(data)
-//       }
-//     );
-//   } catch (error) {
-//     console.log(error.message, "error");
-//   }
-// };
-// cron.schedule("*/5 * * * * *", function () {
-//   console.log("running a task every 10 second");
-//   getLoginDetails();
-// });

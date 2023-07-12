@@ -3,6 +3,7 @@ const hbs = require("nodemailer-express-handlebars");
 const path = require("path");
 
 const sendEmail = async ({ email, subject }) => {
+  console.log("inside send email")
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     service: "gmail",
@@ -25,6 +26,7 @@ const sendEmail = async ({ email, subject }) => {
       },
     ],
   });
+  console.log("sent")
 };
 const sendForgotPasswordEmail = async ({ email, subject, message }) => {
   const transporter = nodemailer.createTransport({

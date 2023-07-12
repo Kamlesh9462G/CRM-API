@@ -10,8 +10,8 @@ const auth = require("../middlewares/auth");
 
 router.route("/").get(auth, userController.getUsers).post(
   // profileImage.single("file"),
-  validate(userValidation.addUser),
-  auth,
+  //validate(userValidation.addUser),
+  //auth,
   userController.addUser
 );
 

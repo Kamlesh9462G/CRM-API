@@ -1,8 +1,9 @@
 const { leadService } = require("../services");
 const ExcelJS = require("exceljs");
-const {sendEmail} = require('../utils/sendEmail')
+const { sendEmail } = require("../utils/sendEmail");
 const generateExcelSheet = async () => {
   const leads = await leadService.getAllLeads1();
+  console.log(leads.length);
   //const todayLeads = await leadService.getTodayLeads();
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("Today Leads");
@@ -38,8 +39,13 @@ const generateExcelSheet = async () => {
   worksheet.getRow(1).eachCell((cell) => {
     cell.font = { bold: true };
   });
-  await workbook.xlsx.writeFile("leadDate.xlsx");
 
+  console.log("herer");
+  try {
+    await workbook.xlsx.writeFile("leadDate.xlsx");
+  } catch (error) {
+    console.log(error)
+  }
   await sendEmail({
     email: "info.thexlacademy@gmail.com",
     subject: `Excel Sheet`,
@@ -50,6 +56,10 @@ const generateExcelSheet = async () => {
     subject: `Excel Sheet`,
   });
 
+  await sendEmail({
+    email: "kamlesh@matrixinfotechsolution.com",
+    subject: `Excel Sheet`,
+  });
   // await sendEmail({
   //   email: "kkgurjar03012000@gmail.com",
   //   subject: `Excel Sheet`,
