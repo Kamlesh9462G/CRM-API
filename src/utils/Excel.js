@@ -36,35 +36,63 @@ const generateExcelSheet = async () => {
   for (let item of leads) {
     worksheet.addRow(item);
   }
+
+
   worksheet.getRow(1).eachCell((cell) => {
     cell.font = { bold: true };
   });
 
+  await workbook.xlsx.writeFile("leadDate.xlsx");
   console.log("herer");
-  try {
-    await workbook.xlsx.writeFile("leadDate.xlsx");
-  } catch (error) {
-    console.log(error)
-  }
-  await sendEmail({
-    email: "info.thexlacademy@gmail.com",
-    subject: `Excel Sheet`,
-  });
-
-  await sendEmail({
-    email: "Girindra.karn@thexlacademy.com",
-    subject: `Excel Sheet`,
-  });
-
-  await sendEmail({
-    email: "kamlesh@matrixinfotechsolution.com",
-    subject: `Excel Sheet`,
-  });
+  // try {
+  // } catch (error) {
+  //   console.log(error);
+  // }
   // await sendEmail({
-  //   email: "kkgurjar03012000@gmail.com",
+  //   email: "info.thexlacademy@gmail.com",
   //   subject: `Excel Sheet`,
   // });
+
+  // await sendEmail({
+  //   email: "Girindra.karn@thexlacademy.com",
+  //   subject: `Excel Sheet`,
+  // });
+
+  // await sendEmail({
+  //   email: "kamlesh@matrixinfotechsolution.com",
+  //   subject: `Excel Sheet`,
+  // });
+  await sendEmail({
+    email: "kkgurjar03012000@gmail.com",
+    subject: `Excel Sheet`,
+  });
+};
+const appendLeads = async () => {
+  console.log("inside append");
+  // const workbook = new ExcelJS.Workbook();
+  // await workbook.xlsx.readFile("leadDate.xlsx");
+
+  const leads = await leadService.getTodayLeadss();
+  console.log(leads.length);
+
+  await sendEmail({
+    email: "kkgurjar03012000@gmail.com",
+    subject: `Excel Sheet`,
+  });
+
+  // const worksheet = workbook.getWorksheet("Today Leads");
+
+  // for (let item of newLeads) {
+  //   worksheet.addRow(item);
+  // }
+
+  // worksheet.getRow(1).eachCell((cell) => {
+  //   cell.font = { bold: true };
+  // });
+
+  // await workbook.xlsx.writeFile("leadData.xlsx");
 };
 module.exports = {
   generateExcelSheet,
+  appendLeads,
 };

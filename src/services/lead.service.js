@@ -278,7 +278,30 @@ const getAllLeads = async () => {
 };
 
 const getAllLeads1 = async () => {
-  return leadsInfo.find();
+  return leadsInfo.find({});
+};
+const getTodayLeadss = async () => {
+  var start = new Date();
+  start.setUTCHours(0, 0, 0, 0);
+
+  var end = new Date();
+  end.setUTCHours(23, 59, 59, 999);
+
+  let filter = {};
+
+  filter["EnquiryDate"] = {
+    $gte: start,
+    $lte: end,
+  };
+  console.log(filter)
+  return leadsInfo.aggregate([
+    {
+      $match: filter
+    },
+  ]);
+  return leadsInfo.find({
+    EnquiryDate: ISODate("2023-07-12T00:00:00.000+00:00"),
+  });
 };
 const getTodayLeads = async () => {
   return leads.aggregate([
@@ -373,4 +396,5 @@ module.exports = {
   getAllLeads1,
   searchDuplicateLeads,
   getNewLeads,
+  getTodayLeadss
 };
