@@ -40,7 +40,13 @@ const addUser = catchAsync(async (req, res) => {
   await tokenService.createSetOrForgotPwdToken(tokenPayload);
 
   let link = `http://localhost:8085/passwordReset?token=${setNewPasswordToken}&id=${addUser._id}`;
-  await sendGreetingEmailToUser(addUser.Email, addUser.Name, link);
+
+  const emailData = {
+    name:addUser.Name,
+    link:link
+  }
+  const subject = "Welcome to Our Lead Management System! Password Update Required.!"
+  await sendGreetingEmailToUser(newAdmin.Email,subject,'user-welcome',emailData);
   // await sendGreetingEmailToUser({
   //   email: addUser.Email,
   //   subject: `Welcome to Our Lead Management System! Password Update Required.`,

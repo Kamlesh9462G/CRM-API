@@ -129,15 +129,17 @@ mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true }).then(() => {
       console.log(`HTTPS Server running on port  ${PORT}`);
     });
   }
-  const job = new CronJob("* * * * *", async function () {
-    try {
-      if (fs.existsSync("./leadDate.xlsx")) {
-        fs.unlinkSync("./leadDate.xlsx");
-      }
-      await generateExcelSheet();
-    } catch (err) {
-      console.error(err);
-    }
-  });
-  job.start();
+  // const job = new CronJob("* * * * *", async function () {
+  //   console.log("cron running")
+  //   try {
+  //     // if (fs.existsSync("./leadDate.xlsx")) {
+  //     //   fs.unlinkSync("./leadDate.xlsx");
+  //     // }
+  //     await generateExcelSheet();
+  //     //await appendLeads()
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // });
+  // job.start();
 });

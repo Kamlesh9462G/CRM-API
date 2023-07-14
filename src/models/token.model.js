@@ -9,7 +9,9 @@ const tokenSchema = mongoose.Schema(
     },
     userId: {
       type: mongoose.SchemaTypes.ObjectId,
-      required: true,
+    },
+    parentId: {
+      type: mongoose.SchemaTypes.ObjectId,
     },
     expires: {
       type: Date,

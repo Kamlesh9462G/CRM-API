@@ -4,10 +4,23 @@ const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const { users, loginLogs } = require("../models");
 const ApiError = require("../utils/ApiError");
-const { sendEmail, sendForgotPasswordEmail } = require("../utils/sendEmail");
+const { sendEmail, sendForgotPasswordEmail,sendGreetingEmailToAdmin } = require("../utils/sendEmail");
 const httpStatus = require("http-status");
 const { strict } = require("assert");
 const catchAsync = require("../utils/catchAsync");
+
+const generateRandomPassword = async (length) => {
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
+  let password = "";
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * chars.length);
+    password += chars.charAt(randomIndex);
+  }
+
+  return password;
+};
 const signupAdmin = catchAsync(async (req, res) => {
   const { Email, UserType } = req.body;
   /**
@@ -40,10 +53,7 @@ const signupAdmin = catchAsync(async (req, res) => {
       });
     }
     try {
-      console.log("inside try");
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      console.log("decoded");
-      console.log(decoded);
       const superAdmin = await users
         .findOne({ _id: decoded.userId, UserType: 1 })
         .lean();
@@ -60,17 +70,36 @@ const signupAdmin = catchAsync(async (req, res) => {
         });
       }
 
-      req.body["Password"] = "admin@123";
-
+      const uniquePwd = await generateRandomPassword(8);
+      req.body["Password"] = uniquePwd;
+      
       let newAdmin = await authService.signupAdmin(req.body);
       newAdmin["parentId"] = decoded.userId;
       await newAdmin.save();
+
+      let setNewPasswordToken = crypto.randomBytes(32).toString("hex");
+      const hash = await bcrypt.hash(setNewPasswordToken, Number(10));
+    
+      let tokenPayload = {
+        adminId: newAdmin._id,
+        token: hash,
+        createdAt: Date.now(),
+      };
+      await tokenService.createSetOrForgotPwdToken(tokenPayload);
+    
+      let link = `http://localhost:8085/passwordReset?token=${setNewPasswordToken}&id=${newAdmin._id}`;
+
+      const emailData = {
+        name:newAdmin.Name,
+        link:link
+      }
+      const subject = "Welcome to Our Lead Management System! Password Update Required.!"
+      await sendGreetingEmailToAdmin(newAdmin.Email,subject,'admin-welcome',emailData);
 
       return res.status(httpStatus.CREATED).json({
         message: "admin created successfully!!",
       });
     } catch (error) {
-      console.log(error.message);
       return res.status(500).json({
         message: error.message,
       });
@@ -88,7 +117,7 @@ const signIn = catchAsync(async (req, res) => {
   const { Email, Password, type } = req.body;
   let currDate = new Date();
   const user = await userService.getUserByEmail(Email);
-  console.log(user)
+  console.log(user);
 
   if (!user) {
     return res.status(httpStatus.BAD_REQUEST).json({

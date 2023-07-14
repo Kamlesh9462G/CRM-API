@@ -2,7 +2,9 @@ const { leadService } = require("../services");
 const ExcelJS = require("exceljs");
 const { sendEmail } = require("../utils/sendEmail");
 const generateExcelSheet = async () => {
+  console.log("came herer")
   const leads = await leadService.getAllLeads1();
+  console.log("after getting leads")
   console.log(leads.length);
   //const todayLeads = await leadService.getTodayLeads();
   const workbook = new ExcelJS.Workbook();
@@ -37,17 +39,16 @@ const generateExcelSheet = async () => {
     worksheet.addRow(item);
   }
 
-
   worksheet.getRow(1).eachCell((cell) => {
     cell.font = { bold: true };
   });
 
-  await workbook.xlsx.writeFile("leadDate.xlsx");
-  console.log("herer");
-  // try {
-  // } catch (error) {
-  //   console.log(error);
-  // }
+  try {
+    await workbook.xlsx.writeFile("leadDate.xlsx");
+    console.log("Excel file generated successfully.");
+  } catch (error) {
+    console.log("An error occurred:", error);
+  }
   // await sendEmail({
   //   email: "info.thexlacademy@gmail.com",
   //   subject: `Excel Sheet`,

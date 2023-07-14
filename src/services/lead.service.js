@@ -278,7 +278,20 @@ const getAllLeads = async () => {
 };
 
 const getAllLeads1 = async () => {
-  return leadsInfo.find({});
+  console.log("inside find leads");
+  const leads = await leadsInfo
+    .aggregate([
+      {
+        '$match': {}
+      },
+      //  {
+      //   '$skip': 8000
+      // }
+    ])
+    
+  console.log(leads.length);
+  return leads;
+  return await leadsInfo.find({});
 };
 const getTodayLeadss = async () => {
   var start = new Date();
@@ -293,10 +306,10 @@ const getTodayLeadss = async () => {
     $gte: start,
     $lte: end,
   };
-  console.log(filter)
-  return leadsInfo.aggregate([
+  console.log(filter);
+  return await leadsInfo.aggregate([
     {
-      $match: filter
+      $match: filter,
     },
   ]);
   return leadsInfo.find({
@@ -396,5 +409,5 @@ module.exports = {
   getAllLeads1,
   searchDuplicateLeads,
   getNewLeads,
-  getTodayLeadss
+  getTodayLeadss,
 };
