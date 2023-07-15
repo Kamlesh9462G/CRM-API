@@ -366,7 +366,7 @@ const requestForgotPassword = catchAsync(async (req, res) => {
   };
   await tokenService.createSetOrForgotPwdToken(tokenPayload);
 
-  const forgotPasswordUrl = `http://localhost:8085/passwordReset?token=${resetToken}&id=${user._id}`;
+  const forgotPasswordUrl = `http://localhost:3000/password-set?token=${resetToken}&id=${user._id}`;
 
   const message = `Hello ${user.Name},\n\n, There is an attempt to Reset your Password for your Profile for the Lead Management System.\nIf you did not try to do so,  make sure no one else has access to this email and relax.\nif you do want to reset the Password then Here is the link:\n\n ${forgotPasswordUrl}`;
 
