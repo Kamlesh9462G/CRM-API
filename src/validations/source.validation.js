@@ -3,8 +3,8 @@ const { objectId } = require("./custom.validation");
 
 const addSource = {
   body: Joi.object().keys({
-    sourceName: Joi.string().custom(objectId).required(),
-    description: Joi.string().custom(objectId).required(),
+    sourceName: Joi.string().required(),
+    description: Joi.string().required(),
   }),
 };
 
@@ -13,8 +13,8 @@ const updateSource = {
     id: Joi.string().custom(objectId).required(),
   }),
   body: Joi.object().keys({
-    sourceName: Joi.string(),
-    description: Joi.string(),
+    sourceName: Joi.string().required(),
+    description: Joi.string().required(),
   }),
 };
 

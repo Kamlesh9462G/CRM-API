@@ -2,7 +2,7 @@ const Joi = require("joi");
 const { objectId } = require("./custom.validation");
 const addStatus = {
   body: Joi.object().keys({
-    status: Joi.string().custom(objectId).required(),
+    status: Joi.string().required(),
   }),
 };
 const updateStatus = {
@@ -10,7 +10,7 @@ const updateStatus = {
     id: Joi.string().custom(objectId).required(),
   }),
   body: Joi.object().keys({
-    status: Joi.string(),
+    status: Joi.string().required(),
   }),
 };
 

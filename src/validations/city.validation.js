@@ -3,7 +3,7 @@ const { objectId } = require("./custom.validation");
 
 const addCity = {
   body: Joi.object().keys({
-    cityName: Joi.string().custom(objectId).required(),
+    cityName: Joi.string().required(),
   }),
 };
 
@@ -12,7 +12,7 @@ const updateCity = {
     id: Joi.string().custom(objectId).required(),
   }),
   body: Joi.object().keys({
-    cityName: Joi.string(),
+    cityName:Joi.string().required(),
   }),
 };
 
