@@ -8,7 +8,6 @@ const addPermission = catchAsync(async (req, res) => {
   });
 });
 const getPermission = catchAsync(async (req, res) => {
-  console.log("inside get permission controller")
   const permissions = await permissionService.getPermission();
   return res.status(200).json({
     Data: permissions,

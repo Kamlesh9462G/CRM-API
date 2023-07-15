@@ -52,7 +52,6 @@ const sendForgotPasswordEmail = async ({ email, subject, message }) => {
 };
 // Function to render an email template
 async function renderTemplate(templateName, context) {
-  console.log(__dirname);
   const filePath = path.join(__dirname, `../views/emails/${templateName}.hbs`);
   const source = fs.readFileSync(filePath, "utf-8");
 
@@ -64,42 +63,35 @@ async function renderTemplate(templateName, context) {
 
   return htmlContent;
 }
-const sendGreetingEmailToUser = async (email, name, link) => {
+const sendGreetingEmailToUser = async (
+  recipient,
+  subject,
+  template,
+  context
+) => {
+  // Render the email template with the provided context
+  const htmlContent = await renderTemplate(template, context);
   try {
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
       service: "gmail",
       port: Number(process.env.MAIL_PORT),
-      secure: Boolean(true),
+      //secure: Boolean(true),
       auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
       },
     });
 
-    // const handlebarOptions = {
-    //   viewEngine: {
-    //     partialsDir: path.resolve("./src/views"),
-    //     defaultLayout: false,
-    //   },
-    //   viewPath: path.resolve("./src/views"),
-    // };
-
-    var mailOptions = {
+    // Send the email
+    await transporter.sendMail({
       from: process.env.MAIL_USER,
-      to: email,
-      subject:
-        "Welcome to Our Lead Management System! Password Update Required.!",
+      to: recipient,
+      subject: subject,
       html: htmlContent,
-      context: {
-        name: name,
-        link: link,
-      },
-    };
+    });
 
-    transporter.use("compile", hbs(handlebarOptions));
-
-    await transporter.sendMail(mailOptions);
+    console.log("Email sent successfully");
   } catch (error) {
     console.log(error.message);
   }

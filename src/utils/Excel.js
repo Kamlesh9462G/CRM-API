@@ -2,10 +2,8 @@ const { leadService } = require("../services");
 const ExcelJS = require("exceljs");
 const { sendEmail } = require("../utils/sendEmail");
 const generateExcelSheet = async () => {
-  console.log("came herer")
   const leads = await leadService.getAllLeads1();
-  console.log("after getting leads")
-  console.log(leads.length);
+  console.log(leads.length)
   //const todayLeads = await leadService.getTodayLeads();
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("Today Leads");

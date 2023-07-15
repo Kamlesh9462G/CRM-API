@@ -21,7 +21,6 @@ class ObservableSubject extends Observable {
 
 class CRUDObserver {
   update(data) {
-    console.log("Received notification:", data);
   }
 }
 

@@ -9,7 +9,6 @@ const crypto = require("crypto");
 const { sendGreetingEmailToUser } = require("../utils/sendEmail");
 
 const addUser = catchAsync(async (req, res) => {
-  console.log(req.user);
   if (req.user.UserType == 3 || req.user.UserType == 1) {
     return res.status(httpStatus.UNAUTHORIZED).json({
       message: "permission denied",
@@ -46,7 +45,7 @@ const addUser = catchAsync(async (req, res) => {
     link:link
   }
   const subject = "Welcome to Our Lead Management System! Password Update Required.!"
-  await sendGreetingEmailToUser(newAdmin.Email,subject,'user-welcome',emailData);
+  await sendGreetingEmailToUser(addUser.Email,subject,'user-welcome',emailData);
   // await sendGreetingEmailToUser({
   //   email: addUser.Email,
   //   subject: `Welcome to Our Lead Management System! Password Update Required.`,
@@ -72,7 +71,6 @@ const deleteUser = catchAsync(async (req, res) => {
   });
 });
 const getUsers = catchAsync(async (req, res) => {
-  console.log(req.user);
   let filter = {};
   filter["UserType"] = 3;
 
@@ -92,11 +90,9 @@ const getUsers = catchAsync(async (req, res) => {
   //   },
   // ];
   if (req.user.UserType == 2) {
-    console.log("inside if");
     filter["parentId"] = new ObjectId(req.user.userId);
   }
   if (req.user.UserType == 3) {
-    console.log("inside if if");
     filter["userId"] = new ObjectId(req.user._id);
     filter["parentId"] = new ObjectId(req.user.parentId);
   }

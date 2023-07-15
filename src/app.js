@@ -39,7 +39,6 @@ app.use(cookieParser());
 app.get("/v1/admin", (req, res, next) => {
   // Show some content to the user
   let fullUrl = req.protocol + "://" + req.get("host") + req.originalUrl;
-  console.log(fullUrl);
   return res.status(200).json({ message: "OK" });
 });
 
@@ -56,7 +55,6 @@ app.use("/v1/admin", adminRoutes);
 app.use("/v2/admin", adminRoutes);
 app.use("/v1/super-admin", superAdminRoutes);
 
-console.log(__dirname);
 app.use(express.static(path.join(__dirname, "/build")));
 app.get("*", (req, res) => {
   // return res.status(200).json({

@@ -17,7 +17,6 @@ const cacheMiddleware = async (req, res, next) => {
       next();
     }
   } catch (error) {
-    console.log(error)
     // return res.status(error).json({
     //   message: error,
     // });

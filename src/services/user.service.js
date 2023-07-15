@@ -26,7 +26,6 @@ const deleteUser = async (userId) => {
   });
 };
 const getUsers = async (filter) => {
-  console.log(filter);
   //return await users.find(filter);
   return await users.aggregate([
     {

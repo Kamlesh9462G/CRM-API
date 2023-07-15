@@ -34,7 +34,6 @@ const addLead = catchAsync(async (req, res) => {
 });
 const updateLead = catchAsync(async (req, res) => {
   req.body["name"] = req.user.name;
-  console.log(req.user);
   const updatedLead = await leadService.updateLead(req.params.id, req.body);
   return res.status(httpStatus.OK).json({
     message: "Lead updated successfully!!",
@@ -55,7 +54,6 @@ const deleteLead = catchAsync(async (req, res) => {
   });
 });
 const getLeads = catchAsync(async (req, res) => {
-  console.log(req.user);
   try {
     const options = pick(req.query, ["sortBy", "limit", "page"]);
 
@@ -247,7 +245,6 @@ const getLeadById = catchAsync(async (req, res) => {
     const lead = await leadService.getLeadById(req.params.id);
     obj = lead;
     delete obj.Branch;
-    console.log(obj);
 
     if (!lead) {
       return res.status(400).json({
@@ -383,7 +380,6 @@ const getNewLeads = catchAsync(async (req, res) => {
     });
   }
   if (EnquiryDate) {
-    console.log(EnquiryDate);
     const isoDateString1 = EnquiryDate.gte;
     const isoDateString2 = EnquiryDate.lte;
 
@@ -462,14 +458,12 @@ const getCourse_Branch_UserData = catchAsync(async (req, res) => {
 
 const addLeadLogs = catchAsync(async (req, res) => {
   const { leadId } = req.body;
-  console.log(leadId);
   const lead = await leadService.getLeadById(leadId);
   if (!lead) {
     return res.status(400).json({
       message: "lead not found!",
     });
   }
-  //console.log(req.user)
   req.body["name"] = req.user.name;
   await leadService.addLeadLogs(leadId, req.body);
   return res.status(httpStatus.CREATED).json({
@@ -512,9 +506,6 @@ const getDuplicateLeads = catchAsync(async (req, res) => {
 });
 
 const TodaysFollowupLeads = catchAsync(async (req, res) => {
-  console.log("came herer");
-
-  console.log(req.user.role);
   if (req.user.role == "admin") {
     return res.status(200).json({
       message: [],

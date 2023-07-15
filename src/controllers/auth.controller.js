@@ -117,7 +117,6 @@ const signIn = catchAsync(async (req, res) => {
   const { Email, Password, type } = req.body;
   let currDate = new Date();
   const user = await userService.getUserByEmail(Email);
-  console.log(user);
 
   if (!user) {
     return res.status(httpStatus.BAD_REQUEST).json({
@@ -207,7 +206,6 @@ const signIn = catchAsync(async (req, res) => {
   });
 });
 const signout = catchAsync(async (req, res) => {
-  console.log(req.user);
   const token =
     req.cookies?.token || req.headers["authorization"]?.split(" ")[1];
   if (token) {
@@ -217,7 +215,6 @@ const signout = catchAsync(async (req, res) => {
       req.user.userId = req.user._id;
     }
     const user = await userService.getUserById(req.user.userId);
-    console.log(user);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }

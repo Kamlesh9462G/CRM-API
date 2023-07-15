@@ -38,7 +38,6 @@ const deleteLead = async (leadId) => {
 };
 
 const getLeads = async (filter, options) => {
-  console.log(filter);
 
   //calculate current date and subtract -1 fro getting yesterday date
   let curDate = new Date();
@@ -96,7 +95,6 @@ const getLeadById = async (leadId) => {
 const addLeadLogs = async (leadId, leadLogData) => {
   const { LogType, Remarks, name } = leadLogData;
   const d = new Date();
-  console.log(d);
   return await leads.findOneAndUpdate(
     { _id: leadId },
     {
@@ -139,7 +137,6 @@ const getDuplicateLeads = async (filter) => {
 };
 
 const TodaysFollowupLeads = async (filter, options) => {
-  console.log(filter);
   const agg = leads.aggregate([
     {
       $match: filter,
@@ -278,18 +275,15 @@ const getAllLeads = async () => {
 };
 
 const getAllLeads1 = async () => {
-  console.log("inside find leads");
   const leads = await leadsInfo
     .aggregate([
       {
         '$match': {}
-      },
-      //  {
-      //   '$skip': 8000
-      // }
+      }, {
+        '$limit': 20
+      }
     ])
     
-  console.log(leads.length);
   return leads;
   return await leadsInfo.find({});
 };
@@ -306,7 +300,6 @@ const getTodayLeadss = async () => {
     $gte: start,
     $lte: end,
   };
-  console.log(filter);
   return await leadsInfo.aggregate([
     {
       $match: filter,
@@ -341,7 +334,6 @@ const searchDuplicateLeads = async (filter) => {
   ]);
 };
 const getNewLeads = async (filter, options) => {
-  console.log(filter);
   //calculate current date and subtract -1 fro getting yesterday date
   let curDate = new Date();
   curDate.setDate(curDate.getDate() - 1);
