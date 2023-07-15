@@ -7,7 +7,7 @@
       "autorestart": true,
       "watch": true,
       "time": true,
-      "ignore_watch": ["node_modules", ".git", "uploads"],
+      "ignore_watch": ["node_modules", ".git", "uploads","__tests__"],
       "env": {
         "NODE_ENV": "production"
       }
