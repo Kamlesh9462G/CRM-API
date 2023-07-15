@@ -5,7 +5,7 @@ const http = require("http");
 const fs = require("fs");
 var CronJob = require("cron").CronJob;
 const app = require("./app");
-const { generateExcelSheet, appendLeads } = require("../src/utils/Excel");
+const { generateExcelSheet } = require("../src/utils/Excel");
 const path = require("path");
 
 const cluster = require("cluster");
@@ -129,17 +129,17 @@ mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true }).then(() => {
       console.log(`HTTPS Server running on port  ${PORT}`);
     });
   }
-  // const job = new CronJob("* * * * *", async function () {
-  //   console.log("cron running")
-  //   try {
-  //     // if (fs.existsSync("./leadDate.xlsx")) {
-  //     //   fs.unlinkSync("./leadDate.xlsx");
-  //     // }
-  //     await generateExcelSheet();
-  //     //await appendLeads()
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // });
-  // job.start();
+  const job = new CronJob("30 5 * * *", async function () {
+    console.log("cron running");
+    let filePath = path.join(__dirname, "../uploads/leadDate.xlsx");
+    try {
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+      await generateExcelSheet();
+    } catch (err) {
+      console.error(err);
+    }
+  });
+  job.start();
 });

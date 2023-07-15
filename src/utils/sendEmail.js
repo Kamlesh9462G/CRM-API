@@ -18,6 +18,8 @@ const sendEmail = async ({ email, subject }) => {
     },
   });
 
+  let filePath = path.join(__dirname,"../../uploads/leadDate.xlsx")
+
   await transporter.sendMail({
     from: process.env.MAIL_USER,
     to: email,
@@ -25,7 +27,7 @@ const sendEmail = async ({ email, subject }) => {
     attachments: [
       {
         filename: "leadDate.xlsx",
-        path: "./leadDate.xlsx",
+        path: filePath,
       },
     ],
   });

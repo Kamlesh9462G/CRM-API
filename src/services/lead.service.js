@@ -38,7 +38,6 @@ const deleteLead = async (leadId) => {
 };
 
 const getLeads = async (filter, options) => {
-
   //calculate current date and subtract -1 fro getting yesterday date
   let curDate = new Date();
   curDate.setDate(curDate.getDate() - 1);
@@ -275,17 +274,13 @@ const getAllLeads = async () => {
 };
 
 const getAllLeads1 = async () => {
-  const leads = await leadsInfo
-    .aggregate([
-      {
-        '$match': {}
-      }, {
-        '$limit': 20
-      }
-    ])
-    
+  const leads = await leadsInfo.aggregate([
+    {
+      $match: {},
+    },
+  ]);
+
   return leads;
-  return await leadsInfo.find({});
 };
 const getTodayLeadss = async () => {
   var start = new Date();
