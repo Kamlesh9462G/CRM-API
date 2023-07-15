@@ -16,7 +16,7 @@ router.post(
 
 router.post(
   "/signin",
-  //validate(authValidation.loginAdmin),
+  validate(authValidation.loginAdmin),
   authController.signIn
 );
 router.post("/signout", auth, authController.signout);
