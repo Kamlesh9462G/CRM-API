@@ -10,7 +10,7 @@ const citySchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       default: null,
     },
-    CityName: {
+    cityName: {
       type: String,
     },
   },
