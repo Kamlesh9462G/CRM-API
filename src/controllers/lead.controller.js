@@ -10,6 +10,7 @@ const pick = require("../utils/pick");
 const { object } = require("joi");
 const { addLeadToAlgolia } = require("../utils/Algolia");
 const { ObjectId } = require("mongodb");
+const axios = require("axios");
 const addLead = catchAsync(async (req, res) => {
   req.body["Remark"] = req.body.Remarks;
 
@@ -632,6 +633,40 @@ const searchDuplicateLeads = catchAsync(async (req, res) => {
     Data: searchedLeads,
   });
 });
+const recieveIndiaMartLeads = catchAsync(async (req, res) => {
+  console.log("running every cron in every 6 minute");
+  const url =
+    "https://mapi.indiamart.com/wservce/crm/crmListing/v2/?glusr_crm_key=mR27G7ps4XbGTvev5XWY+liJoFTCmTY=&start_time=13-july-202309:00:00&end_time=19-July-202313:00:00";
+  const response = await axios.get(url);
+  const leads = response.data.RESPONSE;
+  leads.forEach(async(lead)=>{
+
+    let leadData = {
+      Name: lead.SENDER_NAME ? lead.SENDER_NAME : "",
+      parentId: new ObjectId("64b10903548e3eefb2874999"),
+      EnquiryDate: lead.QUERY_TIME ? lead.QUERY_TIME : "",
+      Phone1: lead.SENDER_MOBILE ? lead.SENDER_MOBILE : "",
+      Phone2: lead.SENDER_MOBILE_ALT ? lead.SENDER_MOBILE_ALT : "",
+      Email: lead.SENDER_EMAIL ? lead.SENDER_EMAIL : "",
+      City: lead.SENDER_CITY ? lead.SENDER_CITY : "",
+      Address: lead.SENDER_ADDRESS ? lead.SENDER_ADDRESS : "",
+      Remark: lead.QUERY_MESSAGE ? lead.QUERY_MESSAGE : "",
+      Source: "IndiaMart",
+    };
+    let addLead = await leadService.addLead(leadData);
+    // console.log(lead);
+    // let leadExist;
+    // if (lead && lead.SENDER_EMAIL) {
+    //   leadExist = await leadService.getLeadsByEmailOrPhone(lead.SENDER_EMAIL);
+    // }
+    // if (!leadExist) {
+    // }
+  })
+  return res.status(200).json({
+    message: "done",
+    data: leads,
+  });
+});
 
 module.exports = {
   addLead,
@@ -646,4 +681,5 @@ module.exports = {
   getLeadLogs,
   searchDuplicateLeads,
   getNewLeads,
+  recieveIndiaMartLeads,
 };

@@ -1,5 +1,6 @@
 const { dashboardService, leadService, userService } = require("../services");
 const catchAsync = require("../utils/catchAsync");
+const { ObjectId } = require("mongodb");
 
 const getLeadsDetail = catchAsync(async (req, res) => {
   let leads = await dashboardService.getLeadsDetail();
@@ -31,24 +32,30 @@ const getLeadsCount = catchAsync(async (req, res) => {
   //         },
   //       },
   let filter = {};
-  if (req.user.role == "user") {
-    let arr = [];
-    if (req.user.Permission.length == 0) {
-      arr.push(req.user.Name);
-      filter["AssignTo"] = {
-        $in: arr,
-      };
-    }
-    if (req.user.Permission.length > 0) {
-      for (let permissionId of req.user.Permission) {
-        let user = await userService.getUserById(permissionId);
-        arr.push(user.Name);
-      }
-      filter["AssignTo"] = {
-        $in: arr,
-      };
-    }
+  if (req.user.UserType == 2) {
+    filter['parentId'] = new ObjectId(req.user.userId);
   }
+  if (req.user.UserType == 3) {
+    filter['userId'] = new ObjectId(req.user.userId);
+  }
+  // if (req.user.UserType == 3) {
+  //   let arr = [];
+  //   if (req.user.Permission.length == 0) {
+  //     arr.push(req.user.Name);
+  //     filter["AssignTo"] = {
+  //       $in: arr,
+  //     };
+  //   }
+  //   if (req.user.Permission.length > 0) {
+  //     for (let permissionId of req.user.Permission) {
+  //       let user = await userService.getUserById(permissionId);
+  //       arr.push(user.Name);
+  //     }
+  //     filter["AssignTo"] = {
+  //       $in: arr,
+  //     };
+  //   }
+  // }
 
   let leadsCount = await leadService.getLeadsCount(filter);
 

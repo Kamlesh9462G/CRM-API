@@ -8,6 +8,7 @@ const { leadValidation } = require("../validations");
 const leadController = require("../controllers/lead.controller");
 
 const router = express.Router();
+router.route("/recieve-indiamart-leads").get(leadController.recieveIndiaMartLeads);
 
 router.route("/duplicate-lead").get(leadController.getDuplicateLeads);
 router
@@ -37,5 +38,6 @@ router
   .get(auth, leadController.getLeadById)
   .put(auth, leadController.updateLead)
   .delete(auth, leadController.deleteLead);
+
 
 module.exports = router;

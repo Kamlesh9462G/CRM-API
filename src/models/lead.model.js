@@ -4,21 +4,18 @@ const leadSchema = mongoose.Schema(
   {
     UID: {
       type: Number,
-      unique: true,
     },
-    objectID: {
-      type: Number,
-      unique: true,
-      index: true,
-    },
+    // objectID: {
+    //   type: Number,
+    //   unique: true,
+    //   index: true,
+    // },
     parentId: {
       type: mongoose.Schema.Types.ObjectId,
-      unique: true,
       default:null
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      unique: true,
       default:null
     },
     Name: {

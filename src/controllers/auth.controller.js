@@ -4,7 +4,11 @@ const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const { users, loginLogs } = require("../models");
 const ApiError = require("../utils/ApiError");
-const { sendEmail, sendForgotPasswordEmail,sendGreetingEmailToAdmin } = require("../utils/sendEmail");
+const {
+  sendEmail,
+  sendForgotPasswordEmail,
+  sendGreetingEmailToAdmin,
+} = require("../utils/sendEmail");
 const httpStatus = require("http-status");
 const { strict } = require("assert");
 const catchAsync = require("../utils/catchAsync");
@@ -72,29 +76,35 @@ const signupAdmin = catchAsync(async (req, res) => {
 
       const uniquePwd = await generateRandomPassword(8);
       req.body["Password"] = uniquePwd;
-      
+
       let newAdmin = await authService.signupAdmin(req.body);
       newAdmin["parentId"] = decoded.userId;
       await newAdmin.save();
 
       let setNewPasswordToken = crypto.randomBytes(32).toString("hex");
       const hash = await bcrypt.hash(setNewPasswordToken, Number(10));
-    
+
       let tokenPayload = {
         adminId: newAdmin._id,
         token: hash,
         createdAt: Date.now(),
       };
       await tokenService.createSetOrForgotPwdToken(tokenPayload);
-    
+
       let link = `http://localhost:8085/passwordReset?token=${setNewPasswordToken}&id=${newAdmin._id}`;
 
       const emailData = {
-        name:newAdmin.Name,
-        link:link
-      }
-      const subject = "Welcome to Our Lead Management System! Password Update Required.!"
-      await sendGreetingEmailToAdmin(newAdmin.Email,subject,'admin-welcome',emailData);
+        name: newAdmin.Name,
+        link: link,
+      };
+      const subject =
+        "Welcome to Our Lead Management System! Password Update Required.!";
+      await sendGreetingEmailToAdmin(
+        newAdmin.Email,
+        subject,
+        "admin-welcome",
+        emailData
+      );
 
       return res.status(httpStatus.CREATED).json({
         message: "admin created successfully!!",
@@ -151,14 +161,20 @@ const signIn = catchAsync(async (req, res) => {
   const jti = generateJTI();
 
   let tokenPayload = {
-    userId: user._id,
-    parentId: user.UserType == 3 ? user.parentId : null,
     appType: type == "web" ? "web" : "app",
     jti: jti,
     role: user.role,
     name: user.Name,
     UserType: user.UserType,
   };
+  if (user.UserType == 2) {
+    tokenPayload["userId"] = user._id;
+    tokenPayload["parentId"] = null;
+  }
+  if (user.UserType == 3) {
+    tokenPayload["userId"] = user._id;
+    tokenPayload["parentId"] = user.parentId;
+  }
 
   const token = tokenService.generateToken(tokenPayload);
 

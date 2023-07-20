@@ -1,6 +1,10 @@
 const { leads, leadLogs, leadsInfo } = require("../models");
 const { ObjectId } = require("mongodb");
 const addLead = async (bodyData) => {
+  const lead = await leads.findOne({ Email: bodyData.Email });
+  if (lead) {
+    return;
+  }
   return await leads.create(bodyData);
 };
 
@@ -146,6 +150,7 @@ const TodaysFollowupLeads = async (filter, options) => {
 };
 
 const getLeadsCount = async (filter) => {
+  console.log(filter)
   return await leads.aggregate([
     {
       $match: filter,
