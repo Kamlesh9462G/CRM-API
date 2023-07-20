@@ -1,8 +1,10 @@
 const { leads } = require("../models");
-const getLeadsDetail = async () => {
-};
-const getAnalyticsDetail = async () => {
+const getLeadsDetail = async () => {};
+const getAnalyticsDetail = async (filter) => {
   return await leads.aggregate([
+    {
+      $match: filter,
+    },
     {
       $group: {
         _id: "$Course",
@@ -36,10 +38,12 @@ const getAnalyticsDetail = async () => {
     },
   ]);
 };
-const getCallDetails = async () => {
-};
-const getSourceDetails = async () => {
+const getCallDetails = async () => {};
+const getSourceDetails = async (filter) => {
   return await leads.aggregate([
+    {
+      $match: filter,
+    },
     {
       $group: {
         _id: "$Source",

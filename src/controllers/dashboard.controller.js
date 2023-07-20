@@ -11,7 +11,14 @@ const getLeadsDetail = catchAsync(async (req, res) => {
   });
 });
 const getAnalyticsDetail = catchAsync(async (req, res) => {
-  let analytics = await dashboardService.getAnalyticsDetail();
+  let filter = {};
+  if (req.user.UserType == 2) {
+    filter['parentId'] = new ObjectId(req.user.userId);
+  }
+  if (req.user.UserType == 3) {
+    filter['userId'] = new ObjectId(req.user.userId);
+  }
+  let analytics = await dashboardService.getAnalyticsDetail(filter);
   return res.status(200).json({
     message: "Leads",
     Data: analytics,
@@ -19,7 +26,14 @@ const getAnalyticsDetail = catchAsync(async (req, res) => {
 });
 const getCallDetails = catchAsync(async (req, res) => {});
 const getSourceDetails = catchAsync(async (req, res) => {
-  let source = await dashboardService.getSourceDetails();
+  let filter = {};
+  if (req.user.UserType == 2) {
+    filter['parentId'] = new ObjectId(req.user.userId);
+  }
+  if (req.user.UserType == 3) {
+    filter['userId'] = new ObjectId(req.user.userId);
+  }
+  let source = await dashboardService.getSourceDetails(filter);
   return res.status(200).json({
     message: "Leads",
     Data: source,
