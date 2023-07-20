@@ -21,8 +21,7 @@ const addLead = {
     Source:Joi.string().required(),
     AssignTo:Joi.string().required(),
     location:Joi.string().required(),
-    Remark:Joi.string().required(),
-    Address:Joi.string().required(),
+    Remarks:Joi.string().required(),
   }),
 };
 
