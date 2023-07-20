@@ -9,7 +9,7 @@ const addLead = {
   body: Joi.object().keys({
     Name:Joi.string().required(),
     EnquiryCourse:Joi.string().required(),
-    CoursePrice:Joi.string().required(),
+    CoursePrice:Joi.number().required(),
     Phone1:Joi.string().required(),
     Phone2:Joi.string().required(),
     Email:Joi.string().required(),
