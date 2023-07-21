@@ -12,6 +12,7 @@ module.exports.contactService = require('./contact.service');
 module.exports.atService = require("./at.service");
 module.exports.permissionService = require('./permission.service');
 module.exports.profileService = require('./profile.service');
+module.exports.templateService = require('./template.service')
 
 
 

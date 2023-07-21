@@ -13,4 +13,5 @@ module.exports.invalidtokens = require('./invalidToken.model');
 module.exports.contacts = require("./contacts.model");
 module.exports.punches = require("./at.model");
 module.exports.permissions = require('./permission.model')
-
+module.exports.indiamartleads = require('./indiamart.lead.model')
+module.exports.templates = require('./templates.model')

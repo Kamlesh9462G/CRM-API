@@ -20,12 +20,13 @@ const auth = async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await users.findById(decoded.userId).lean();
+    console.log(user)
 
     if (!user) {
       throw new ApiError(httpStatus.UNAUTHORIZED, "unauthorized");
     }
 
-    if (user && (user.UserType == 2 || user.UserType == 3)) {
+    if (user && (user.UserType == 1 || user.UserType == 2 || user.UserType == 3)) {
       req.user = decoded;
       return next();
     }

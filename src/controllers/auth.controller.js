@@ -125,134 +125,130 @@ function generateJTI() {
 }
 const signIn = catchAsync(async (req, res) => {
   const { Email, Password, type } = req.body;
-  let currDate = new Date();
-  const user = await userService.getUserByEmail(Email);
+
+  try {
+    const user = await userService.getUserByEmail(Email);
+
+    if (!user) {
+      return res
+        .status(httpStatus.BAD_REQUEST)
+        .json({ message: "Invalid email" });
+    }
+
+    const currentDate = new Date();
+    if (currentDate > user.validupTo) {
+      return res.status(httpStatus.UNAUTHORIZED).json({
+        message: "Contract validity period expired. Please contact the admin!",
+      });
+    }
+
+    if (!user.active) {
+      return res.status(httpStatus.UNAUTHORIZED).json({
+        message: "User is inactive. Please contact the admin!",
+      });
+    }
+
+    if (user.appTypes.includes(type)) {
+      return res.status(httpStatus.UNAUTHORIZED).json({
+        message: "User is already logged in another device!",
+      });
+    }
+
+    const isPasswordMatched = await bcrypt.compare(Password, user.Password);
+    if (!isPasswordMatched) {
+      return res
+        .status(httpStatus.BAD_REQUEST)
+        .json({ message: "Password does not match!" });
+    }
+
+    const tokenPayload = {
+      appType: type === "web" ? "web" : "app",
+      jti: generateJTI(),
+      role: user.role,
+      name: user.Name,
+      UserType: user.UserType,
+    };
+
+    if (user.UserType === 1) {
+      tokenPayload.userId = user._id;
+    } else if (user.UserType === 2) {
+      tokenPayload.userId = user._id;
+      tokenPayload.parentId = null;
+    } else if (user.UserType === 3) {
+      tokenPayload.userId = user._id;
+      tokenPayload.parentId = user.parentId;
+    }
+
+    const token = tokenService.generateToken(tokenPayload);
+
+    await new loginLogs({
+      userId: user._id,
+      type: 2,
+      token: token,
+    }).save();
+
+    user.appTypes.push(type);
+    if (type === "app") {
+      user.appJtis.push(tokenPayload.jti);
+    } else if (type === "web") {
+      user.webJtis.push(tokenPayload.jti);
+    }
+
+    await user.save();
+
+    res.cookie(String("token"), token, {
+      path: "/",
+      maxAge: 900000,
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+    });
+
+    const userData = {
+      Name: user.Name,
+      Email: user.Email,
+      role: user.role,
+      UserType: user && user.UserType,
+      pin: !!user.pin,
+      menuPermissions: user.menuPermissions,
+    };
+
+    return res.status(httpStatus.OK).json({
+      message: "Success",
+      statusCode: httpStatus.OK,
+      token: token,
+      userData,
+    });
+  } catch (error) {
+    console.error("Error in signIn:", error);
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      message: "An error occurred during sign-in. Please try again later.",
+    });
+  }
+});
+
+const signout = catchAsync(async (req, res) => {
+  const token = req.cookies?.token || (req.headers["authorization"] || "").split(" ")[1];
+
+  if (!token) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  const { type } = req.body;
+  const user = await userService.getUserById(req.user.userId);
 
   if (!user) {
-    return res.status(httpStatus.BAD_REQUEST).json({
-      message: "invalid email",
-    });
-  }
-  if (currDate > user.validupTo) {
-    return res.status(httpStatus.UNAUTHORIZED).json({
-      message: "Contract Validity period expired please contact to admin!",
-    });
-  }
-  if (!user.active) {
-    return res.status(httpStatus.UNAUTHORIZED).json({
-      message: "user is inactive please contact to admin!!",
-    });
+    return res.status(404).json({ message: "User not found" });
   }
 
-  // Check if the user is already logged in to the same app type
+  // Remove the app type from user's app types and corresponding jti
   if (user.appTypes.includes(type)) {
-    return res
-      .status(401)
-      .json({ message: "User is already logged in another device!!" });
-  }
+    user.appTypes = user.appTypes.filter((appType) => appType !== type);
 
-  const decPassord = await bcrypt.compare(Password, user.Password);
-  if (!decPassord) {
-    return res.status(httpStatus.BAD_REQUEST).json({
-      message: "password does not matched!",
-    });
-  }
-  // Generate a unique jti value
-  const jti = generateJTI();
-
-  let tokenPayload = {
-    appType: type == "web" ? "web" : "app",
-    jti: jti,
-    role: user.role,
-    name: user.Name,
-    UserType: user.UserType,
-  };
-  if (user.UserType == 2) {
-    tokenPayload["userId"] = user._id;
-    tokenPayload["parentId"] = null;
-  }
-  if (user.UserType == 3) {
-    tokenPayload["userId"] = user._id;
-    tokenPayload["parentId"] = user.parentId;
-  }
-
-  const token = tokenService.generateToken(tokenPayload);
-
-  await new loginLogs({
-    userId: user._id,
-    type: 2,
-    token: token,
-  }).save();
-
-  // Update the user's app types and jti array
-  user.appTypes.push(type);
-  if (type === "app") {
-    user.appJtis.push(jti);
-  } else if (type === "web") {
-    user.webJtis.push(jti);
-  }
-  await user.save();
-
-  // res.cookie(String("token"), token, {
-  //   httpOnly: true,
-  // });
-
-  res.cookie(String("token"), token, {
-    path: "/",
-    maxAge: 900000,
-    httpOnly: true,
-    sameSite: "none",
-    secure: true,
-  });
-  //res.cookie('token', token, { maxAge: 3600000, httpOnly: true,sameSite:strict,secure:true });
-
-  let userData = {};
-  userData["Name"] = user.Name;
-  userData["Email"] = user.Email;
-  userData["role"] = user.role;
-  userData["UserType"] = user && user.UserType;
-  userData["pin"] = user.pin != null ? true : false;
-  userData["menuPermissions"] = user.menuPermissions;
-
-  return res.status(httpStatus.OK).json({
-    message: "success",
-    statusCode: httpStatus.OK,
-    token: token,
-    userData,
-  });
-});
-const signout = catchAsync(async (req, res) => {
-  const token =
-    req.cookies?.token || req.headers["authorization"]?.split(" ")[1];
-  if (token) {
-    let { type } = req.body;
-    // Find the user by ID
-    if (req.user.UserType == 1) {
-      req.user.userId = req.user._id;
-    }
-    const user = await userService.getUserById(req.user.userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    // Remove the app type from user's app types
-    const index = user.appTypes.indexOf(type);
-    if (index !== -1) {
-      user.appTypes.splice(index, 1);
-    }
-
-    // Remove the corresponding jti from the appropriate array
     if (type === "app") {
-      const jtiIndex = user.appJtis.indexOf(req.user.jti);
-      if (jtiIndex !== -1) {
-        user.appJtis;
-
-        user.appJtis.splice(jtiIndex, 1);
-      }
+      user.appJtis = user.appJtis.filter((jti) => jti !== req.user.jti);
     } else if (type === "web") {
-      const jtiIndex = user.webJtis.indexOf(req.user.jti);
-      if (jtiIndex !== -1) {
-        user.webJtis.splice(jtiIndex, 1);
-      }
+      user.webJtis = user.webJtis.filter((jti) => jti !== req.user.jti);
     }
 
     await user.save();
@@ -266,6 +262,7 @@ const signout = catchAsync(async (req, res) => {
     });
   }
 });
+
 const createPin = catchAsync(async (req, res) => {
   const { _id } = req.user;
   const { pin, confirmPin } = req.body;

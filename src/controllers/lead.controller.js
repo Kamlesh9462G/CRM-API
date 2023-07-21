@@ -6,11 +6,15 @@ const { leadService, userService } = require("../services");
 const CourseModel = require("../models/course.model");
 const BranchModel = require("../models/branch.model");
 const UsersModel = require("../models/user.model");
+const indiamartleads = require("../models/indiamart.lead.model");
 const pick = require("../utils/pick");
 const { object } = require("joi");
 const { addLeadToAlgolia } = require("../utils/Algolia");
 const { ObjectId } = require("mongodb");
 const axios = require("axios");
+const { fi } = require("faker/lib/locales");
+var CronJob = require("cron").CronJob;
+
 const addLead = catchAsync(async (req, res) => {
   req.body["Remark"] = req.body.Remarks;
 
@@ -633,38 +637,92 @@ const searchDuplicateLeads = catchAsync(async (req, res) => {
     Data: searchedLeads,
   });
 });
-const recieveIndiaMartLeads = catchAsync(async (req, res) => {
-  console.log("running every cron in every 6 minute");
-  const url =
-    "https://mapi.indiamart.com/wservce/crm/crmListing/v2/?glusr_crm_key=mR27G7ps4XbGTvev5XWY+liJoFTCmTY=&start_time=13-july-202309:00:00&end_time=19-July-202313:00:00";
+const formatedDate = async () => {
+  let amTime = "09:00:00";
+  let pmTime = "13:00:00";
+  let firstDay = new Date();
+
+  let sixthDay = new Date();
+  sixthDay.setDate(firstDay.getDate() + 4);
+
+  // Add leading zeroes to day and month components
+  let formattedStartTime =
+    (firstDay.getDate() < 10 ? "0" : "") +
+    firstDay.getDate() +
+    "-" +
+    (firstDay.getMonth() + 1 < 10 ? "0" : "") +
+    (firstDay.getMonth() + 1) +
+    "-" +
+    firstDay.getFullYear() +
+    " " +
+    amTime;
+
+  // Add leading zeroes to day and month components
+  let formattedEndTime =
+    (sixthDay.getDate() < 10 ? "0" : "") +
+    sixthDay.getDate() +
+    "-" +
+    (sixthDay.getMonth() + 1 < 10 ? "0" : "") +
+    (sixthDay.getMonth() + 1) +
+    "-" +
+    sixthDay.getFullYear() +
+    " " +
+    pmTime;
+  return {
+    startTime: formattedStartTime,
+    endTime: formattedEndTime,
+  };
+};
+const recieveIndiaMartLeads = async () => {
+  const getFormatedDate = await formatedDate();
+  const url = `https://mapi.indiamart.com/wservce/crm/crmListing/v2/?glusr_crm_key=${process.env.GLUSR_CRM_KEY}=&start_time=${getFormatedDate.startTime}&end_time=${getFormatedDate.endTime}`;
   const response = await axios.get(url);
   const leads = response.data.RESPONSE;
-  leads.forEach(async(lead)=>{
+  leads.forEach(async (lead) => {
+    const existingLead = await indiamartleads.findOne({
+      UNIQUE_QUERY_ID: lead.UNIQUE_QUERY_ID,
+    });
+    if (!existingLead) {
+      lead["PARENT_ID"] = new ObjectId("64b10903548e3eefb2874999");
+      let addLead = await indiamartleads.create(lead);
+    }
+  });
+};
+const job = new CronJob("*/1 * * * *", async function () {
+  console.log("cron running every 10 minute");
+  try {
+    recieveIndiaMartLeads();
+  } catch (err) {
+    console.error(err);
+  }
+});
+job.start();
 
+const assignLeadToUser = catchAsync(async (req, res) => {
+  const { leadId, userId } = req.body;
+  const lead = await indiamartleads.findOne({ _id: leadId, ASSIGNED: false });
+  if (lead) {
+    const user = await userService.getUserById(userId);
     let leadData = {
-      Name: lead.SENDER_NAME ? lead.SENDER_NAME : "",
-      parentId: new ObjectId("64b10903548e3eefb2874999"),
-      EnquiryDate: lead.QUERY_TIME ? lead.QUERY_TIME : "",
-      Phone1: lead.SENDER_MOBILE ? lead.SENDER_MOBILE : "",
-      Phone2: lead.SENDER_MOBILE_ALT ? lead.SENDER_MOBILE_ALT : "",
-      Email: lead.SENDER_EMAIL ? lead.SENDER_EMAIL : "",
-      City: lead.SENDER_CITY ? lead.SENDER_CITY : "",
-      Address: lead.SENDER_ADDRESS ? lead.SENDER_ADDRESS : "",
-      Remark: lead.QUERY_MESSAGE ? lead.QUERY_MESSAGE : "",
-      Source: "IndiaMart",
+      Remark: QUERY_MESSAGE,
+      parentId: PARENT_ID,
+      userId: userId,
+      Name: SENDER_NAME,
+      EnquiryDate: QUERY_TIME,
+      Phone1: SENDER_MOBILE,
+      Phone2: SENDER_MOBILE_ALT,
+      Email: SENDER_EMAIL,
+      City: SENDER_CITY,
+      Address: SENDER_ADDRESS,
+      AssignTo: user.Name,
     };
-    let addLead = await leadService.addLead(leadData);
-    // console.log(lead);
-    // let leadExist;
-    // if (lead && lead.SENDER_EMAIL) {
-    //   leadExist = await leadService.getLeadsByEmailOrPhone(lead.SENDER_EMAIL);
-    // }
-    // if (!leadExist) {
-    // }
-  })
+    await leadService.addLead(leadData);
+  }
+  lead["ASSIGNED"] = true;
+  await lead.save();
+
   return res.status(200).json({
-    message: "done",
-    data: leads,
+    message: "lead assigned successfully!!",
   });
 });
 
@@ -682,4 +740,5 @@ module.exports = {
   searchDuplicateLeads,
   getNewLeads,
   recieveIndiaMartLeads,
+  assignLeadToUser,
 };

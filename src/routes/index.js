@@ -7,13 +7,14 @@ const sourceRoute = require("./source.route");
 const branchRoute = require("./branch.route");
 const cityRoute = require("./city.route");
 const statusRoute = require("./status.route");
-const authRoute = require('./auth.route')
-const dashboardRoute = require('./dashboard.route')
-const contactRoute = require('./contact.route')
-const atRoute = require("./at.route")
-const webhookRoute = require('./webhook.route');
-const permissionRoute = require('./permission.route');
-const profileRoute = require('./profile.route')
+const authRoute = require("./auth.route");
+const dashboardRoute = require("./dashboard.route");
+const contactRoute = require("./contact.route");
+const atRoute = require("./at.route");
+const webhookRoute = require("./webhook.route");
+const permissionRoute = require("./permission.route");
+const profileRoute = require("./profile.route");
+const templateRoute = require("./template.route");
 const router = express.Router();
 
 const defaultRoutes = [
@@ -70,9 +71,13 @@ const defaultRoutes = [
     route: permissionRoute,
   },
   {
-    path:"/profile",
-    route:profileRoute
-  }
+    path: "/profile",
+    route: profileRoute,
+  },
+  {
+    path: "/template",
+    route: templateRoute,
+  },
 ];
 
 defaultRoutes.forEach((route) => {
