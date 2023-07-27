@@ -44,6 +44,11 @@ const getCourse = catchAsync(async (req, res) => {
   const redisClient = req.app.get("redisClient");
 
   let filter = {};
+  if (req.user.UserType == 1) {
+    Object.assign(filter, {
+      parentId: new ObjectId(req.query.parentId),
+    });
+  }
   if (req.user.UserType === 2) {
     filter["parentId"] = req.user.userId;
   }
