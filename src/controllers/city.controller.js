@@ -36,6 +36,11 @@ const deleteCity = catchAsync(async (req, res) => {
 });
 const getCity = catchAsync(async (req, res) => {
   let filter = {};
+  if (req.user.UserType == 1) {
+    Object.assign(filter, {
+      parentId: new ObjectId(req.query.parentId),
+    });
+  }
   if (req.user.UserType === 2) {
     filter["parentId"] = req.user.userId;
   }

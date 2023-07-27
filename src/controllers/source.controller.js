@@ -5,11 +5,6 @@ const { sourceService } = require("../services");
 const catchAsync = require("../utils/catchAsync");
 const addSource = catchAsync(async (req, res) => {
 
-  if (req.user.UserType == 1) {
-    Object.assign(filter, {
-      parentId: new ObjectId(req.query.parentId),
-    });
-  }
   if (req.user.UserType == 2) {
     req.body["parentId"] = req.user.userId;
   }
@@ -42,6 +37,11 @@ const deleteSource = catchAsync(async (req, res) => {
 });
 const getSource = catchAsync(async (req, res) => {
   let filter = {};
+  if (req.user.UserType == 1) {
+    Object.assign(filter, {
+      parentId: new ObjectId(req.query.parentId),
+    });
+  }
   if (req.user.UserType === 2) {
     filter["parentId"] = req.user.userId;
   }
