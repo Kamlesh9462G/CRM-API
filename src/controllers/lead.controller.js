@@ -7,6 +7,7 @@ const CourseModel = require("../models/course.model");
 const BranchModel = require("../models/branch.model");
 const UsersModel = require("../models/user.model");
 const indiamartleads = require("../models/indiamart.lead.model");
+const notifications = require("../models/notification.model");
 const pick = require("../utils/pick");
 const { object } = require("joi");
 const { addLeadToAlgolia } = require("../utils/Algolia");
@@ -29,6 +30,16 @@ const addLead = catchAsync(async (req, res) => {
   }
 
   let addLead = await leadService.addLead(req.body);
+
+  const user = await userService.getUserByName(req.body.AssignTo);
+  console.log(user)
+  if (user) {
+    console.log("inside if")
+    await notifications.create({
+      userId: user._id,
+      message: "Lead has been assigned to you!",
+    });
+  }
 
   //await addLeadToAlgolia(addLead);
 
@@ -75,6 +86,13 @@ const getLeads = catchAsync(async (req, res) => {
     let dynamicObj = {
       $and: [],
     };
+    if (req.user.UserType == 1) {
+      console.log("herer")
+      filter["parentId"] = new ObjectId(req.query.parentId);
+      dynamicObj.$and.push({
+        $or: [{ parentId: { $in: [new ObjectId(req.query.parentId)] } }],
+      });
+    }
     if (req.user.UserType == 2) {
       filter["parentId"] = new ObjectId(req.user.userId);
       dynamicObj.$and.push({
@@ -84,9 +102,9 @@ const getLeads = catchAsync(async (req, res) => {
     if (req.user.UserType == 3) {
     }
 
-    dynamicObj.$and.push({
-      $or: [{ Status: { $in: ["Open", "Final Lead", "Hot Lead"] } }],
-    });
+    // dynamicObj.$and.push({
+    //   $or: [{ Status: { $in: ["Open", "Final Lead", "Hot Lead"] } }],
+    // });
     if (req.user.role === 3) {
       let arr = [];
       arr.push(req.user.Name);
@@ -336,6 +354,11 @@ const getNewLeads = catchAsync(async (req, res) => {
   } = req.query;
   let filter = {};
   const options = pick(req.query, ["sortBy", "limit", "page"]);
+  if (req.user.UserType == 1) {
+    Object.assign(filter, {
+      parentId: new ObjectId(req.query.parentId),
+    });
+  }
   if (req.user.UserType == 2) {
     Object.assign(filter, {
       parentId: new ObjectId(req.user.userId),
@@ -688,7 +711,7 @@ const recieveIndiaMartLeads = async () => {
     }
   });
 };
-const job = new CronJob("*/1 * * * *", async function () {
+const job = new CronJob("*/10 * * * *", async function () {
   console.log("cron running every 10 minute");
   try {
     recieveIndiaMartLeads();

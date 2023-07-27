@@ -170,6 +170,10 @@ const getAllAdminsNew = async (filter) => {
   ]);
 };
 
+const getUserByName = async(name)=>{
+  return await users.findOne({Name:name})
+}
+
 module.exports = {
   addUser,
   updateUser,
@@ -180,4 +184,5 @@ module.exports = {
   getUserById,
   getAllAdmins,
   getAllAdminsNew,
+  getUserByName
 };

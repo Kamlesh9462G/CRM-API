@@ -18,6 +18,7 @@ const client = redis.createClient({
   host: "127.0.0.1",
   port: 6379,
 });
+const { io } = require("./utils/socket");
 
 let server;
 
@@ -111,6 +112,8 @@ mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true }).then(() => {
     const httpServer = http.createServer(app);
     server = httpServer.listen(PORT, () => {
       console.log(`HTTP Server running on port ${PORT}`);
+      let io = require('socket.io')(server);
+      require('./utils/socket')(io);
     });
   } else {
     const httpsServer = https.createServer(
