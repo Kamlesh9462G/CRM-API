@@ -57,10 +57,10 @@ app.use("/v1/super-admin", superAdminRoutes);
 
 app.use(express.static(path.join(__dirname, "/build")));
 app.get("*", (req, res) => {
-  // return res.status(200).json({
-  //   message:"success!!"
-  // })
-  return res.sendFile(path.join(__dirname, "/build", "index.html"));
+  return res.status(200).json({
+    message:"success!!"
+  })
+  //return res.sendFile(path.join(__dirname, "/build", "index.html"));
 });
 
 // send back a 404 error for any unknown api request
