@@ -13,6 +13,7 @@ const numCPUs = require("os").cpus().length;
 //const {client} = require("../src/utils/redis"); // Import the Redis client
 
 const redis = require("redis");
+const hostname = '127.0.0.1';
 
 const client = redis.createClient({
   host: "127.0.0.1",
@@ -150,8 +151,9 @@ let HTTPS = process.env.HTTPS;
 
 if (HTTPS == "false") {
   const httpServer = http.createServer(app);
-  server = httpServer.listen(PORT, () => {
-    console.log(`HTTP Server running on port ${PORT}`);
+  server = httpServer.listen(PORT,hostname, () => {
+    console.log(`Server running at http://${hostname}:${PORT}/`);
+    //console.log(`HTTP Server running on port ${PORT}`);
     let io = require('socket.io')(server);
     require('./utils/socket')(io);
   });
