@@ -61,14 +61,14 @@ const generateExcelSheet = async () => {
   } catch (error) {
     console.log("An error occurred:", error);
   }
-  await sendEmail({
-    email: "Girindra.karn@thexlacademy.com",
-    subject: `Excel Sheet`,
-  });
-  await sendEmail({
-    email: "info.thexlacademy@gmail.com",
-    subject: `Excel Sheet`,
-  });
+  // await sendEmail({
+  //   email: "Girindra.karn@thexlacademy.com",
+  //   subject: `Excel Sheet`,
+  // });
+  // await sendEmail({
+  //   email: "info.thexlacademy@gmail.com",
+  //   subject: `Excel Sheet`,
+  // });
 };
 module.exports = {
   generateExcelSheet,

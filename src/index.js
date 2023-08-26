@@ -105,44 +105,70 @@ let HTTPS = process.env.HTTPS;
 //     });
 // }
 
-mongoose.set("strictQuery", true);
-mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true }).then(() => {
-  console.log("mongoDB Connected");
-  if (HTTPS == "false") {
-    const httpServer = http.createServer(app);
-    server = httpServer.listen(PORT, () => {
-      console.log(`HTTP Server running on port ${PORT}`);
-      let io = require('socket.io')(server);
-      require('./utils/socket')(io);
-    });
-  } else {
-    const httpsServer = https.createServer(
-      {
-        key: fs.readFileSync(
-          "/etc/letsencrypt/live/crm-live.thetoppersacademy.org/privkey.pem"
-        ),
-        cert: fs.readFileSync(
-          "/etc/letsencrypt/live/crm-live.thetoppersacademy.org/fullchain.pem"
-        ),
-      },
-      app
-    );
+// mongoose.set("strictQuery", true);
+// mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true }).then(() => {
+//   console.log("mongoDB Connected");
+//   if (HTTPS == "false") {
+//     const httpServer = http.createServer(app);
+//     server = httpServer.listen(PORT, () => {
+//       console.log(`HTTP Server running on port ${PORT}`);
+//       let io = require('socket.io')(server);
+//       require('./utils/socket')(io);
+//     });
+//   } else {
+//     const httpsServer = https.createServer(
+//       {
+//         key: fs.readFileSync(
+//           "/etc/letsencrypt/live/crm-live.thetoppersacademy.org/privkey.pem"
+//         ),
+//         cert: fs.readFileSync(
+//           "/etc/letsencrypt/live/crm-live.thetoppersacademy.org/fullchain.pem"
+//         ),
+//       },
+//       app
+//     );
 
-    server = httpsServer.listen(PORT, () => {
-      console.log(`HTTPS Server running on port  ${PORT}`);
-    });
-  }
-  const job = new CronJob("30 5 * * *", async function () {
-    console.log("cron running");
-    let filePath = path.join(__dirname, "../uploads/leadDate.xlsx");
-    try {
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-      }
-      await generateExcelSheet();
-    } catch (err) {
-      console.error(err);
-    }
+//     server = httpsServer.listen(PORT, () => {
+//       console.log(`HTTPS Server running on port  ${PORT}`);
+//     });
+//   }
+//   const job = new CronJob("* * * * *", async function () {
+//     console.log("cron running");
+//     let filePath = path.join(__dirname, "../uploads/leadDate.xlsx");
+//     try {
+//       if (fs.existsSync(filePath)) {
+//         fs.unlinkSync(filePath);
+//         await generateExcelSheet();
+//       }
+//     } catch (err) {
+//       console.error(err);
+//     }
+//   });
+//   job.start();
+// });
+
+
+if (HTTPS == "false") {
+  const httpServer = http.createServer(app);
+  server = httpServer.listen(PORT, () => {
+    console.log(`HTTP Server running on port ${PORT}`);
+    let io = require('socket.io')(server);
+    require('./utils/socket')(io);
   });
-  job.start();
-});
+} else {
+  const httpsServer = https.createServer(
+    {
+      key: fs.readFileSync(
+        "/etc/letsencrypt/live/crm-live.thetoppersacademy.org/privkey.pem"
+      ),
+      cert: fs.readFileSync(
+        "/etc/letsencrypt/live/crm-live.thetoppersacademy.org/fullchain.pem"
+      ),
+    },
+    app
+  );
+
+  server = httpsServer.listen(PORT, () => {
+    console.log(`HTTPS Server running on port  ${PORT}`);
+  });
+}
